@@ -14,8 +14,9 @@ public class Licor extends Bebida{
 		this.tipo = tipo;
 	}
 	public Licor(String graduacion, String marca, float capacidad, String nombre, int stock, String origen,
-			String codigo, String tipo) {
-		super(graduacion, marca, capacidad, nombre, stock, origen, codigo);
+			String codigo, double precio, String tipo) {
+		super(graduacion, marca, capacidad, nombre, stock, origen, codigo, precio);
+		this.tipo = tipo;
 	}
 
 }

@@ -6,6 +6,7 @@ public class Factura {
 	private String fecha;
 	private String codigoCliente;
 	private String medioDePago;
+	
 	public float getMonto() {
 		return monto;
 	}
@@ -47,6 +48,17 @@ public class Factura {
 		this.medioDePago = medioDePago;
 	}
 	
-
+	//Realiza un interes de 10% si se paga con tarjeta.
+	private float precioFinal() {
+		float precio;
+		
+		if(medioDePago == "Tarjeta") {
+			precio = (float) (monto * 1.1);
+		}
+		else {
+			precio = monto;
+		}
+		return precio;
+	}
 	
 }

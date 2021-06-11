@@ -9,11 +9,12 @@ public class Bebida {
 	private int stock;
 	private String origen;
 	private String codigo;
+	private double precio;
 	
 	
 	
 	public Bebida(String graduacion, String marca, float capacidad, String nombre, int stock, String origen,
-			String codigo) {
+			String codigo, double precio) {
 		super();
 		this.graduacion = graduacion;
 		this.marca = marca;
@@ -22,6 +23,7 @@ public class Bebida {
 		this.stock = stock;
 		this.origen = origen;
 		this.codigo = codigo;
+		this.precio = precio;
 	}
 	public String getGraduacion() {
 		return graduacion;
@@ -65,6 +67,12 @@ public class Bebida {
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
+	public double getPrecio() {
+		return precio;
+	}
+	public void setPrecio (double precio) {
+		this.precio = precio;
+	}
 	@Override
 	
 	public String toString() {
@@ -72,5 +80,11 @@ public class Bebida {
 				+ nombre + ", stock=" + stock + ", origen=" + origen + ", codigo=" + codigo + "]";
 	}
 	
-
+	public int restarStock() {
+		return this.stock-1;
+	}
+	
+	public int sumarStock() {
+		return this.stock+1;
+	}
 }

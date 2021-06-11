@@ -27,7 +27,10 @@ public class Vino extends Bebida{
 		this.año = año;
 	}
 	public Vino(String graduacion, String marca, float capacidad, String nombre, int stock, String origen,
-			String codigo, String tipo, String bodega, int año) {
-		super(graduacion, marca, capacidad, nombre, stock, origen, codigo);
+			String codigo, double precio, String tipo, String bodega, int año) {
+		super(graduacion, marca, capacidad, nombre, stock, origen, codigo, precio);
+		this.año = año;
+		this.bodega = bodega;
+		this.tipo = tipo;
 		}
 }
