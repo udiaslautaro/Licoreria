@@ -2,14 +2,18 @@ package app;
 import java.util.Scanner;
 import model.Bebida;
 import model.Cerveza;
+import model.Cliente;
+import model.HistorialPedidos;
 import model.InventarioBebidas;
 import model.Licor;
+import model.ListaClientes;
+import model.Pedido;
 import model.Vino;
 
 public class Main {
 
 	public static void main(String[] args) {
-		
+		HistorialPedidos listaPedidos = new HistorialPedidos();
 		menu();
 
 	}
@@ -32,7 +36,36 @@ public class Main {
 				if (contraseña == 1234){
 					menuAdmin();
 				}else System.out.println("Contraseña incorrecta");
-				
+			break;
+		case 2:
+			ListaClientes listaClientes = new ListaClientes();
+			System.out.println("1 - Registrarse como cliente");
+			System.out.println("2 - Iniciar sesión");
+			int operacion = scan.nextInt();
+			switch (operacion) {
+			case 1:
+		        Cliente cliente = new Cliente();
+				System.out.println("Ingrese su nombre:");
+				cliente.setNombre(scan.next());
+				System.out.println("Ingrese su apellido:");
+				cliente.setApellido(scan.next());
+				System.out.println("Ingrese su número de DNI:");
+				cliente.setDni(scan.next());
+				System.out.println("Ingrese su fecha de nacimiento:");
+				cliente.setNacimiento(scan.next());
+				System.out.println("Ingrese una contraseña:");
+				cliente.setContraseña(scan.next());
+				listaClientes.agregarCliente(cliente);
+				System.out.println("Su nombre de usuario será: "+cliente.getNombreUsuario());
+				break;
+			case 2:
+				System.out.println("Ingrese su nombre de usuario");
+				String nombreUsuario = scan.next(); 
+				System.out.println("Ingrese contraseña");
+				String password = scan.next();
+				menuCliente();
+			}
+
 		}
 	
 		scan.close();
@@ -126,4 +159,33 @@ public class Main {
 		}		
 		scan.close();
 		}
+	
+	private static void menuCliente() {
+		
+		System.out.println("Ingrese que operación desea realizar:");
+		System.out.println("1 - Realizar pedido.");
+		System.out.println("2 - Consultar pedidos anteriores.");
+		System.out.println("3 - Imprimir factura.");
+		int opcion;
+		Scanner scan = new Scanner(System.in);
+		opcion = scan.nextInt();
+		switch (opcion) {
+		case 1:
+
+			char continuar = 'S';
+			while (continuar == 'S') {
+				
+				//agregar bebidas al pedido
+				
+				System.out.println("Desea agregar otra bebida al pedido? S/N");
+				scan.next().charAt(continuar);
+			}
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		}
+		scan.close();
+	}
 }

@@ -5,7 +5,16 @@ import java.util.ArrayList;
 public class Pedido {
 
 	private ArrayList <Bebida> pedido;
+	private Cliente cliente;
 
+	public Pedido(Cliente cliente) {
+		pedido = new ArrayList<>();
+		this.cliente = cliente;
+	}
+	
+	public Cliente getCliente() {
+		return cliente;
+	}
 	public ArrayList<Bebida> getPedido() {
 		return pedido;
 	}

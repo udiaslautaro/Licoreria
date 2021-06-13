@@ -6,6 +6,7 @@ public class Factura {
 	private String fecha;
 	private String codigoCliente;
 	private String medioDePago;
+	private Pedido pedido;
 	
 	public float getMonto() {
 		return monto;
@@ -31,21 +32,26 @@ public class Factura {
 	public void setMedioDePago(String medioDePago) {
 		this.medioDePago = medioDePago;
 	}
+	public Pedido getPedido() {
+		return pedido;
+	}
 	
-	private Factura(float monto, String fecha, String codigoCliente, String medioDePago) {
+	private Factura(float monto, String fecha, String codigoCliente, String medioDePago, Pedido pedido) {
 		super();
 		this.monto = monto;
 		this.fecha = fecha;
 		this.codigoCliente = codigoCliente;
 		this.medioDePago = medioDePago;
+		this.pedido = pedido;
 	}
 	/* Constructor para Consumidor Final*/
 	
-	private Factura(float monto, String fecha, String medioDePago) {
+	private Factura(float monto, String fecha, String medioDePago, Pedido pedido) {
 		super();
 		this.monto = monto;
 		this.fecha = fecha;
 		this.medioDePago = medioDePago;
+		this.pedido = pedido;
 	}
 	
 	//Realiza un interes de 10% si se paga con tarjeta.
@@ -60,5 +66,14 @@ public class Factura {
 		}
 		return precio;
 	}
+	
+	//Muestra Detalle factura
+	@Override
+	public String toString() {
+		return "Factura [monto=" + monto + ", fecha=" + fecha + ", codigoCliente=" + codigoCliente + ", medioDePago="
+				+ medioDePago + "]";
+	}
+	
+	
 	
 }
