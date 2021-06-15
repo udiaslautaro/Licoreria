@@ -43,4 +43,21 @@ public class InventarioBebidas {
 		}
 		return detalleBebida;
 	}
+	public void modificarStock(String codigo, int stock) {
+		for (int i=0; i< listaBebidas.size(); i++) {
+			if (listaBebidas.get(i).getCodigo() == codigo) {
+				listaBebidas.get(i).setStock(listaBebidas.get(i).getStock()+stock);
+			}
+		}
+	}
+	public boolean codigoExiste (String codigo) {
+		boolean bool=false;
+		for (int i=0; i< listaBebidas.size(); i++) {
+			if (listaBebidas.get(i).getCodigo() == codigo) {
+				bool=true;
+				}
+			}
+		return bool; 
+	}
 }
+ 

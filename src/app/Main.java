@@ -1,6 +1,5 @@
 package app;
 import java.util.Scanner;
-import model.Bebida;
 import model.Cerveza;
 import model.Cliente;
 import model.HistorialPedidos;
@@ -143,10 +142,36 @@ public class Main {
 				listaBebidas.agregarBebida(new Cerveza(graduacionCerveza, marcaCerveza, capacidadCerveza, nombreCerveza, stockCerveza, origenCerveza, codigoCerveza, precioCerveza, variedad));
 				break;
 			case 3:
+				System.out.println("Ingrese marca:");
+				String marcaLicor= scan.next();
+				System.out.println("Ingrese nombre:");
+				String nombreLicor= scan.next();
+				System.out.println("Ingrse tipo de licor: ");
+				String tipoLicor= scan.next();
+				System.out.println("Ingrese origen: ");
+				String origenLicor= scan.next();
+				System.out.println("Ingrese graduacion alcoholica: ");
+				String graduacionLicor= scan.next();
+				System.out.println("Ingrese capacidad: ");
+				float capacidadLicor = scan.nextFloat();
+				System.out.println("Ingrese cantidad de stock inicial: ");
+				int stockLicor= scan.nextInt();
+				System.out.println("Ingrese el precio por unidad: ");
+				double precioLicor = scan.nextDouble();
+				String codigoLicor= "aca va el codigo";
+				listaBebidas.agregarBebida(new Licor(graduacionLicor, marcaLicor, capacidadLicor,nombreLicor, stockLicor, origenLicor, codigoLicor, precioLicor, tipoLicor ));
 				break;
 			}
 			scan.close();
 		case 2:
+				System.out.println("Ingrese el codigo de la bebida:");
+				String codigoBebida = scan.next();
+				if (listaBebidas.codigoExiste(codigoBebida)== true){
+					System.out.println("Ingrese stock a agregar: ");
+					int stockBebida = scan.nextInt();
+					listaBebidas.modificarStock(codigoBebida, stockBebida);
+				}else System.out.println("El codigo ingresado no es valido");
+				
 			break;
 		case 3:
 			break;
