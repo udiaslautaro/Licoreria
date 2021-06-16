@@ -67,5 +67,10 @@ public class InventarioBebidas {
 		}
 		return pos;
 		}
+	
+	public void modificarPrecio(float precio, int i) {
+		listaBebidas.get(i).setPrecio(precio);
+		
+	}
 }
  

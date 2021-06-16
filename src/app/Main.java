@@ -11,70 +11,82 @@ import model.Vino;
 
 public class Main {
 
+	public static Scanner scan = new Scanner(System.in);
+
+
 	public static void main(String[] args) {
 		HistorialPedidos listaPedidos = new HistorialPedidos();
 		InventarioBebidas listaBebidas = new InventarioBebidas();
 		menu(listaBebidas);
-
+		scan.close();
 	}
 
-	
+
 	public static void menu(InventarioBebidas listaBebidas) {
-		
+
 		System.out.println("Bienvenido");
 		System.out.println("1- Ingresar como Administrador");
 		System.out.println("2- Ingresar como Cliente");
-		Scanner scan = new Scanner(System.in);
+		System.out.println("3- Salir");
 		int opcion;
 		opcion = scan.nextInt();
-		switch (opcion) {
-		case 1: 
-			scan.nextLine();	
-			System.out.println("Ingrese Contraseña de administrador: ");
+		if (opcion == 1 || opcion == 2 || opcion == 3) {
+			switch (opcion) {
+			case 1: 
+				scan.nextLine();	
+				System.out.println("Ingrese Contraseña de administrador: ");
 				int contraseña;
 				contraseña=scan.nextInt();
 				if (contraseña == 1234){
 					menuAdmin(listaBebidas);
 				}else System.out.println("Contraseña incorrecta");
-			break;
-		case 2:
-			ListaClientes listaClientes = new ListaClientes();
-			System.out.println("1 - Registrarse como cliente");
-			System.out.println("2 - Iniciar sesión");
-			int operacion = scan.nextInt();
-			switch (operacion) {
-			case 1:
-		        Cliente cliente = new Cliente();
-				System.out.println("Ingrese su nombre:");
-				cliente.setNombre(scan.next());
-				System.out.println("Ingrese su apellido:");
-				cliente.setApellido(scan.next());
-				System.out.println("Ingrese su número de DNI:");
-				cliente.setDni(scan.next());
-				System.out.println("Ingrese su fecha de nacimiento:");
-				cliente.setNacimiento(scan.next());
-				System.out.println("Ingrese una contraseña:");
-				cliente.setContraseña(scan.next());
-				listaClientes.agregarCliente(cliente);
-				System.out.println("Su nombre de usuario será: "+cliente.getNombreUsuario());
 				break;
 			case 2:
-				System.out.println("Ingrese su nombre de usuario");
-				String nombreUsuario = scan.next(); 
-				System.out.println("Ingrese contraseña");
-				String password = scan.next();
-				menuCliente();
-			}
+				ListaClientes listaClientes = new ListaClientes();
+				System.out.println("1 - Registrarse como cliente");
+				System.out.println("2 - Iniciar sesión");
+				int operacion = scan.nextInt();
+				switch (operacion) {
+				case 1:
+					Cliente cliente = new Cliente();
+					System.out.println("Ingrese su nombre:");
+					cliente.setNombre(scan.nextLine());
+					System.out.println("Ingrese su apellido:");
+					cliente.setApellido(scan.nextLine());
+					System.out.println("Ingrese su número de DNI:");
+					cliente.setDni(scan.nextLine());
+					System.out.println("Ingrese su fecha de nacimiento:");
+					cliente.setNacimiento(scan.nextLine());
+					System.out.println("Ingrese una contraseña:");
+					cliente.setContraseña(scan.nextLine());
+					listaClientes.agregarCliente(cliente);
+					System.out.println("Su nombre de usuario será: "+cliente.getNombreUsuario());
+					break;
+				case 2:
+					System.out.println("Ingrese su nombre de usuario");
+					String nombreUsuario = scan.next(); 
+					System.out.println("Ingrese contraseña");
+					String password = scan.nextLine();
+					menuCliente();
+					break;
+				case 3 :
+					System.out.println("Adios!");
+					scan.next();
+					
+					break;
+				}
 
+			}
+		}else {
+			System.out.println("Opcion invalida!");
+			scan.next();
+			menu(listaBebidas);
 		}
-	
-		scan.close();
 	}
 
 
 	private static void menuAdmin(InventarioBebidas listaBebidas) {
 		int opcion=0;
-		Scanner scan = new Scanner(System.in);
 
 		while (opcion != 6) { 
 			System.out.println("1- Ingresar nueva Bebida");
@@ -84,55 +96,101 @@ public class Main {
 			System.out.println("5- Eliminar bebida del inventario");
 			System.out.println("6- Salir al menu principal");
 			opcion = scan.nextInt();
+			switch (opcion) {
+			case 1: 
+				menuIngreso(listaBebidas);
+				break;
+			case 2:
+				menuStock(listaBebidas);
+				break;
+			case 3:
+				menuPrecio(listaBebidas);
+				break;
+			case 4:
+				mostrarInventario(listaBebidas);
+				break;
+			case 5:
+				eliminarBebida(listaBebidas);
+				break;
+			case 6:
+				menu(listaBebidas);
+				break;
+
+			}		
 		}
-		switch (opcion) {
-		case 1: 
-			menuIngreso(listaBebidas);
-			break;
-		case 2:
-			menuStock(listaBebidas);
-			break;
-		case 3:
-			menuPrecio(listaBebidas);
-			break;
-		case 4:
-			mostrarInventario(listaBebidas);
-			break;
-		case 5:
-			
-			break;
-		case 6:
-			scan.close();
-			break;
-			
-		}		
-		scan.close();
 	}
-	
+	private static void eliminarBebida(InventarioBebidas listaBebidas) {
+		String confirm, codigo;
+		System.out.println("Ingrese el codigo de la bebida a eliminar");
+		codigo =scan.nextLine();
+		if (listaBebidas.codigoExiste(codigo)) {
+			System.out.println("Esta a punto de eliminar "+ listaBebidas.buscarPorCodigo(codigo) + "Para confirmar ingrese Si");
+			confirm=scan.nextLine();
+			if (confirm== "Si") {
+				listaBebidas.eliminarBebidaPorCodigo(codigo);
+				System.out.println("Bebida eliminada, desea eliminar otra bebida? Si o cualquier tecla para salir");
+				confirm=scan.nextLine();
+				if(confirm == "Si") {
+					eliminarBebida(listaBebidas);
+				}else {
+					menuAdmin(listaBebidas);
+				}
+
+			}
+		}else {
+			System.out.println("Codigo ingresado invalido desea volver a intentarlo? Si o cualquier tecla para salir");
+			scan.next();
+			confirm=scan.nextLine();
+			if (confirm == "Si") {
+				eliminarBebida(listaBebidas);
+			}else {
+				menuAdmin(listaBebidas);
+			}
+		}
+	}
+
 	private static void mostrarInventario(InventarioBebidas listaBebidas) {
 		listaBebidas.mostrarTodoInventario();
-		
+
 	}
 	private static void menuPrecio(InventarioBebidas listaBebidas) {
-		
+		String codigo, opcion;
+		float precio;
+		System.out.println("Ingrese el codigo de la bebida a la que desea modificarle el precio: ");
+		codigo = scan.nextLine();
+		if(listaBebidas.codigoExiste(codigo)) {
+			int i= listaBebidas.posicionPorCodigo(codigo);
+			System.out.println("Ingrese nuevo precio");
+			precio=scan.nextFloat();
+			listaBebidas.modificarPrecio(precio, i);
+		}else {
+			System.out.println("El codigo ingresado es invalido, Si para volver a ingresar cualquier otra tecla para salir");
+			scan.next();
+			opcion= scan.nextLine();
+			if (opcion== "Si") {
+				menuPrecio(listaBebidas);
+			}else {
+				menuAdmin(listaBebidas);
+			}
+			
+		}
 	}
 	private static void menuCliente() {
-		
+
 		System.out.println("Ingrese que operación desea realizar:");
 		System.out.println("1 - Realizar pedido.");
 		System.out.println("2 - Consultar pedidos anteriores.");
 		System.out.println("3 - Imprimir factura.");
 		int opcion;
-		Scanner scan = new Scanner(System.in);
 		opcion = scan.nextInt();
 		switch (opcion) {
 		case 1:
 
 			char continuar = 'S';
 			while (continuar == 'S') {
-				
+
 				//agregar bebidas al pedido
-				
+
 				System.out.println("Desea agregar otra bebida al pedido? S/N");
 				scan.next().charAt(continuar);
 			}
@@ -142,34 +200,31 @@ public class Main {
 		case 3:
 			break;
 		}
-		scan.close();
 	}
-	
+
 	private static void menuIngreso(InventarioBebidas listaBebidas) {
-		Scanner scan=new Scanner(System.in);
 		int opcion;
 		String op;
 		System.out.println("1- Vino");
 		System.out.println("2- Cerveza");
 		System.out.println("3- Licor");
-		scan.next();
 		opcion = scan.nextInt();
 		switch (opcion) {
 		case 1: 
 			System.out.println("Ingrese marca:");
-			String marca= scan.next();
+			String marca= scan.nextLine();
 			System.out.println("Ingrese nombre: ");
-			String nombre=scan.next();
+			String nombre=scan.nextLine();
 			System.out.println("Ingrese origen:");
-			String origen=scan.next();
+			String origen=scan.nextLine();
 			System.out.println("Ingrese bodega:");
-			String bodega=scan.next();
+			String bodega=scan.nextLine();
 			System.out.println("Ingrese la variedad de vino:");
-			String tipo=scan.next();
+			String tipo=scan.nextLine();
 			System.out.println("Ingrese cosecha:");
 			int año = scan.nextInt();
 			System.out.println("Ingrese graduacion alcoholica:");
-			String graduacion=scan.next();
+			String graduacion=scan.nextLine();
 			System.out.println("Ingrese capacidad:");
 			float capacidad= scan.nextFloat();
 			System.out.println("Ingrese cantidad de stock inicial:");
@@ -183,25 +238,23 @@ public class Main {
 			listaBebidas.agregarBebida(new Vino(graduacion, marca, capacidad, nombre, stock, origen,
 					codigo,precio , tipo, bodega, año));
 			System.out.println("Desea agregar otra bebida? escriba Si o cualquier tecla para volver al menu");
-			op=scan.next();
+			op=scan.nextLine();
 			if (op== "Si") {
-				scan.close();
 				menuIngreso(listaBebidas);
 			}
-			scan.close();
 			menuAdmin(listaBebidas);
 			break;
 		case 2:
 			System.out.println("Ingrese marca:");
-			String marcaCerveza= scan.next();
+			String marcaCerveza= scan.nextLine();
 			System.out.println("Ingrese nombre: ");
-			String nombreCerveza=scan.next();
+			String nombreCerveza=scan.nextLine();
 			System.out.println("Ingrese que variedad de cerveza es:");
-			String variedad=scan.next();
+			String variedad=scan.nextLine();
 			System.out.println("Ingrese origen:");
-			String origenCerveza=scan.next();
+			String origenCerveza=scan.nextLine();
 			System.out.println("Ingrese graduacion alcoholica:");
-			String graduacionCerveza=scan.next();
+			String graduacionCerveza=scan.nextLine();
 			System.out.println("Ingrese capacidad:");
 			float capacidadCerveza= scan.nextFloat();
 			System.out.println("Ingrese cantidad de stock inicial:");
@@ -213,25 +266,23 @@ public class Main {
 			//agrega al inventario un nuevo tipo de cerveza
 			listaBebidas.agregarBebida(new Cerveza(graduacionCerveza, marcaCerveza, capacidadCerveza, nombreCerveza, stockCerveza, origenCerveza, codigoCerveza, precioCerveza, variedad));
 			System.out.println("Desea agregar otra bebida? escriba Si o cualquier tecla para volver al menu");
-			op=scan.next();
+			op=scan.nextLine();
 			if (op== "Si") {
-				scan.close();
 				menuIngreso(listaBebidas);
 			}
-			scan.close();
 			menuAdmin(listaBebidas);
 			break;
 		case 3:
 			System.out.println("Ingrese marca:");
-			String marcaLicor= scan.next();
+			String marcaLicor= scan.nextLine();
 			System.out.println("Ingrese nombre:");
-			String nombreLicor= scan.next();
+			String nombreLicor= scan.nextLine();
 			System.out.println("Ingrse tipo de licor: ");
-			String tipoLicor= scan.next();
+			String tipoLicor= scan.nextLine();
 			System.out.println("Ingrese origen: ");
-			String origenLicor= scan.next();
+			String origenLicor= scan.nextLine();
 			System.out.println("Ingrese graduacion alcoholica: ");
-			String graduacionLicor= scan.next();
+			String graduacionLicor= scan.nextLine();
 			System.out.println("Ingrese capacidad: ");
 			float capacidadLicor = scan.nextFloat();
 			System.out.println("Ingrese cantidad de stock inicial: ");
@@ -243,30 +294,29 @@ public class Main {
 			System.out.println("Desea agregar otra bebida? escriba Si o cualquier tecla para volver al menu");
 			op=scan.next();
 			if (op== "Si") {
-				scan.close();
+
 				menuIngreso(listaBebidas);
 			}
-			scan.close();
 			menuAdmin(listaBebidas);
 			break;
 		}	
 	}
 	private static void menuStock(InventarioBebidas listaBebidas) {
-		Scanner scan =new Scanner(System.in);
 		int opcion;
 		System.out.println("Ingrese el codigo de la bebida:");
-		String codigoBebida = scan.next();
+		String codigoBebida = scan.nextLine();
 		if (listaBebidas.codigoExiste(codigoBebida)== true){
 			System.out.println("Ingrese stock a agregar: ");
 			int stockBebida = scan.nextInt();
 			listaBebidas.modificarStock(codigoBebida, stockBebida);
 		}else {System.out.println("El codigo ingresado no es valido");
-			System.out.println("Presione 1 para salir o cualquier otra tecla para reintentar");
-			opcion =scan.nextInt();
-			if (opcion == 1) {
-				menuAdmin(listaBebidas);
-				scan.close();
-			}else menuStock(listaBebidas);
+		scan.next();
+		System.out.println("Presione 1 para salir o cualquier otra tecla para reintentar");
+		opcion =scan.nextInt();
+		if (opcion == 1) {
+			menuAdmin(listaBebidas);
+		}else menuStock(listaBebidas);
 		}
 	}
+
 }
