@@ -72,5 +72,21 @@ public class InventarioBebidas {
 		listaBebidas.get(i).setPrecio(precio);
 		
 	}
+	
+	public int totalBebidas() {
+		return listaBebidas.size();
+	}
+	
+	public Bebida devolverPorPosicion(int pos) {
+		return listaBebidas.get(pos);
+	}
+	
+	public StringBuilder mostrarInfoBebidas() {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < listaBebidas.size(); i++) {
+			builder.append(listaBebidas.get(i).infoBebida());
+		}
+		return builder;
+	}
 }
  

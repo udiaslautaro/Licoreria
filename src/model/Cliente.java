@@ -53,7 +53,7 @@ public class Cliente {
 	public void setNombreUsuario(String nombreUsuario) {
 		this.nombreUsuario = nombreUsuario;
 	}
-	private Cliente(String apellido, String dni, String codigo, String contraseña, String nacimiento, String nombre, String nombreUsuario) {
+	public Cliente(String apellido, String dni, String codigo, String contraseña, String nacimiento, String nombre, String nombreUsuario) {
 		super();
 		this.apellido = apellido;
 		this.dni = dni;

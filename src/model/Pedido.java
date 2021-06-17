@@ -38,8 +38,8 @@ public class Pedido {
 	}
 	
 	//calcula el precio final del pedido
-	public double montoPedido() {
-		double monto = 0;
+	public float montoPedido() {
+		float monto = 0;
 		for (int i = 0; i < pedido.size(); i++) {
 			monto += pedido.get(i).getPrecio();
 		}
@@ -53,4 +53,5 @@ public class Pedido {
 		}
 		return builder;
 	}
+	
 }

@@ -77,7 +77,7 @@ public class Bebida {
 	
 	public String toString() {
 		return "Bebida [graduacion=" + graduacion + ", marca=" + marca + ", capacidad=" + capacidad + ", nombre="
-				+ nombre + ", stock=" + stock + ", origen=" + origen + ", codigo=" + codigo + "]";
+				+ nombre + ", stock=" + stock + ", origen=" + origen + ", codigo=" + codigo + "]\n";
 	}
 	
 	public int restarStock() {
@@ -86,5 +86,9 @@ public class Bebida {
 	
 	public int sumarStock() {
 		return this.stock+1;
+	}
+	
+	public String infoBebida() {
+		return "Codigo: "+codigo + "Nombre: "+nombre+"Marca: "+marca+"Capacidad: "+capacidad+"Precio: "+precio+"\n";
 	}
 }

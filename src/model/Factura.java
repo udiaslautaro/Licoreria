@@ -1,11 +1,13 @@
 package model;
 
+import java.util.Date;
+
 public class Factura {
 
 	private float monto;
-	private String fecha;
+	private Date fecha;
 	private String codigoCliente;
-	private String medioDePago;
+	private int medioDePago;
 	private Pedido pedido;
 	
 	public float getMonto() {
@@ -14,10 +16,10 @@ public class Factura {
 	public void setMonto(float monto) {
 		this.monto = monto;
 	}
-	public String getFecha() {
+	public Date getFecha() {
 		return fecha;
 	}
-	public void setFecha(String fecha) {
+	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
 	public String getCodigoCliente() {
@@ -26,17 +28,17 @@ public class Factura {
 	public void setCodigoCliente(String codigoCliente) {
 		this.codigoCliente = codigoCliente;
 	}
-	public String getMedioDePago() {
+	public int getMedioDePago() {
 		return medioDePago;
 	}
-	public void setMedioDePago(String medioDePago) {
+	public void setMedioDePago(int medioDePago) {
 		this.medioDePago = medioDePago;
 	}
 	public Pedido getPedido() {
 		return pedido;
 	}
 	
-	private Factura(float monto, String fecha, String codigoCliente, String medioDePago, Pedido pedido) {
+	public Factura(float monto, Date fecha, String codigoCliente, int medioDePago, Pedido pedido) {
 		super();
 		this.monto = monto;
 		this.fecha = fecha;
@@ -46,19 +48,19 @@ public class Factura {
 	}
 	/* Constructor para Consumidor Final*/
 	
-	private Factura(float monto, String fecha, String medioDePago, Pedido pedido) {
+	public Factura(float monto, Date fecha, int medioDePago, Pedido pedido) {
 		super();
 		this.monto = monto;
 		this.fecha = fecha;
 		this.medioDePago = medioDePago;
 		this.pedido = pedido;
 	}
+
 	
 	//Realiza un interes de 10% si se paga con tarjeta.
-	private float precioFinal() {
+	public float precioFinal() {
 		float precio;
-		
-		if(medioDePago == "Tarjeta") {
+		if(medioDePago == 1) {
 			precio = (float) (monto * 1.1);
 		}
 		else {
@@ -70,8 +72,8 @@ public class Factura {
 	//Muestra Detalle factura
 	@Override
 	public String toString() {
-		return "Factura [monto=" + monto + ", fecha=" + fecha + ", codigoCliente=" + codigoCliente + ", medioDePago="
-				+ medioDePago + "]";
+		return "Factura [Fecha =" +fecha+ "Monto Total=" + monto + ", medioDePago="
+				+ medioDePago +", Precio Final" + precioFinal() + ", codigoCliente=" + codigoCliente +  "]";
 	}
 	
 	

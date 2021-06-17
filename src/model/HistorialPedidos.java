@@ -23,4 +23,8 @@ public class HistorialPedidos {
 		}
 		return builder;
 	}
+	
+	public void eliminarPedido(Pedido pedido) {
+		listaPedidos.remove(pedido);
+	}
 }

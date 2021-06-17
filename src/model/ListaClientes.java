@@ -26,4 +26,28 @@ public class ListaClientes {
 		}
 		return builder;
 	}
+	
+	public boolean estaCliente(String nombreUsuario, String password) {
+		boolean esta = false;
+		for (int i = 0; i < listaClientes.size(); i++) {
+			if (listaClientes.get(i).getNombreUsuario() == nombreUsuario && listaClientes.get(i).getContraseña() == password) {
+				esta = true;
+			}
+		}
+		return esta;
+	}
+	
+	public int devolverPosicionCliente(String nombreUsuario) {
+		int pos = 0;
+		for (int i = 0; i < listaClientes.size(); i++) {
+			if (listaClientes.get(i).getNombreUsuario() == nombreUsuario) {
+				pos = i;
+			}
+		}
+		return pos;
+	}
+	
+	public Cliente devolverCliente(int pos) {
+		return listaClientes.get(pos);
+	}
 }

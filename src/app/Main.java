@@ -1,7 +1,9 @@
 package app;
 import java.util.Scanner;
+import java.util.Date;
 import model.Cerveza;
 import model.Cliente;
+import model.Factura;
 import model.HistorialPedidos;
 import model.InventarioBebidas;
 import model.Licor;
@@ -17,12 +19,12 @@ public class Main {
 	public static void main(String[] args) {
 		HistorialPedidos listaPedidos = new HistorialPedidos();
 		InventarioBebidas listaBebidas = new InventarioBebidas();
-		menu(listaBebidas);
+		menu(listaBebidas, listaPedidos);
 		scan.close();
 	}
 
 
-	public static void menu(InventarioBebidas listaBebidas) {
+	public static void menu(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 
 		System.out.println("Bienvenido");
 		System.out.println("1- Ingresar como Administrador");
@@ -38,7 +40,7 @@ public class Main {
 				int contraseña;
 				contraseña=scan.nextInt();
 				if (contraseña == 1234){
-					menuAdmin(listaBebidas);
+					menuAdmin(listaBebidas, listaPedidos);
 				}else System.out.println("Contraseña incorrecta");
 				break;
 			case 2:
@@ -48,31 +50,14 @@ public class Main {
 				int operacion = scan.nextInt();
 				switch (operacion) {
 				case 1:
-					Cliente cliente = new Cliente();
-					System.out.println("Ingrese su nombre:");
-					cliente.setNombre(scan.nextLine());
-					System.out.println("Ingrese su apellido:");
-					cliente.setApellido(scan.nextLine());
-					System.out.println("Ingrese su número de DNI:");
-					cliente.setDni(scan.nextLine());
-					System.out.println("Ingrese su fecha de nacimiento:");
-					cliente.setNacimiento(scan.nextLine());
-					System.out.println("Ingrese una contraseña:");
-					cliente.setContraseña(scan.nextLine());
-					listaClientes.agregarCliente(cliente);
-					System.out.println("Su nombre de usuario será: "+cliente.getNombreUsuario());
+					crearCliente(listaClientes);
 					break;
 				case 2:
-					System.out.println("Ingrese su nombre de usuario");
-					String nombreUsuario = scan.next(); 
-					System.out.println("Ingrese contraseña");
-					String password = scan.nextLine();
-					menuCliente();
+					iniciarSesion(listaClientes, listaBebidas, listaPedidos);
 					break;
 				case 3 :
 					System.out.println("Adios!");
 					scan.next();
-					
 					break;
 				}
 
@@ -80,12 +65,12 @@ public class Main {
 		}else {
 			System.out.println("Opcion invalida!");
 			scan.next();
-			menu(listaBebidas);
+			menu(listaBebidas, listaPedidos);
 		}
 	}
 
 
-	private static void menuAdmin(InventarioBebidas listaBebidas) {
+	private static void menuAdmin(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		int opcion=0;
 
 		while (opcion != 6) { 
@@ -98,28 +83,28 @@ public class Main {
 			opcion = scan.nextInt();
 			switch (opcion) {
 			case 1: 
-				menuIngreso(listaBebidas);
+				menuIngreso(listaBebidas, listaPedidos);
 				break;
 			case 2:
-				menuStock(listaBebidas);
+				menuStock(listaBebidas, listaPedidos);
 				break;
 			case 3:
-				menuPrecio(listaBebidas);
+				menuPrecio(listaBebidas, listaPedidos);
 				break;
 			case 4:
 				mostrarInventario(listaBebidas);
 				break;
 			case 5:
-				eliminarBebida(listaBebidas);
+				eliminarBebida(listaBebidas, listaPedidos);
 				break;
 			case 6:
-				menu(listaBebidas);
+				menu(listaBebidas, listaPedidos);
 				break;
 
 			}		
 		}
 	}
-	private static void eliminarBebida(InventarioBebidas listaBebidas) {
+	private static void eliminarBebida(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		String confirm, codigo;
 		System.out.println("Ingrese el codigo de la bebida a eliminar");
 		codigo =scan.nextLine();
@@ -131,9 +116,9 @@ public class Main {
 				System.out.println("Bebida eliminada, desea eliminar otra bebida? Si o cualquier tecla para salir");
 				confirm=scan.nextLine();
 				if(confirm == "Si") {
-					eliminarBebida(listaBebidas);
+					eliminarBebida(listaBebidas, listaPedidos);
 				}else {
-					menuAdmin(listaBebidas);
+					menuAdmin(listaBebidas, listaPedidos);
 				}
 
 			}
@@ -142,9 +127,9 @@ public class Main {
 			scan.next();
 			confirm=scan.nextLine();
 			if (confirm == "Si") {
-				eliminarBebida(listaBebidas);
+				eliminarBebida(listaBebidas, listaPedidos);
 			}else {
-				menuAdmin(listaBebidas);
+				menuAdmin(listaBebidas, listaPedidos);
 			}
 		}
 	}
@@ -153,7 +138,7 @@ public class Main {
 		listaBebidas.mostrarTodoInventario();
 
 	}
-	private static void menuPrecio(InventarioBebidas listaBebidas) {
+	private static void menuPrecio(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		String codigo, opcion;
 		float precio;
 		System.out.println("Ingrese el codigo de la bebida a la que desea modificarle el precio: ");
@@ -168,14 +153,14 @@ public class Main {
 			scan.next();
 			opcion= scan.nextLine();
 			if (opcion== "Si") {
-				menuPrecio(listaBebidas);
+				menuPrecio(listaBebidas, listaPedidos);
 			}else {
-				menuAdmin(listaBebidas);
+				menuAdmin(listaBebidas, listaPedidos);
 			}
 			
 		}
 	}
-	private static void menuCliente() {
+	private static void menuCliente(Cliente cliente, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 
 		System.out.println("Ingrese que operación desea realizar:");
 		System.out.println("1 - Realizar pedido.");
@@ -185,24 +170,17 @@ public class Main {
 		opcion = scan.nextInt();
 		switch (opcion) {
 		case 1:
-
-			char continuar = 'S';
-			while (continuar == 'S') {
-
-				//agregar bebidas al pedido
-
-				System.out.println("Desea agregar otra bebida al pedido? S/N");
-				scan.next().charAt(continuar);
-			}
+			Pedido pedido = new Pedido(cliente);
+			nuevoPedido(pedido, listaBebidas, listaPedidos);
 			break;
+		
 		case 2:
-			break;
-		case 3:
+				mostrarPedidosCliente(cliente, listaPedidos);
 			break;
 		}
 	}
 
-	private static void menuIngreso(InventarioBebidas listaBebidas) {
+	private static void menuIngreso(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		int opcion;
 		String op;
 		System.out.println("1- Vino");
@@ -240,9 +218,9 @@ public class Main {
 			System.out.println("Desea agregar otra bebida? escriba Si o cualquier tecla para volver al menu");
 			op=scan.nextLine();
 			if (op== "Si") {
-				menuIngreso(listaBebidas);
+				menuIngreso(listaBebidas, listaPedidos);
 			}
-			menuAdmin(listaBebidas);
+			menuAdmin(listaBebidas, listaPedidos);
 			break;
 		case 2:
 			System.out.println("Ingrese marca:");
@@ -268,9 +246,9 @@ public class Main {
 			System.out.println("Desea agregar otra bebida? escriba Si o cualquier tecla para volver al menu");
 			op=scan.nextLine();
 			if (op== "Si") {
-				menuIngreso(listaBebidas);
+				menuIngreso(listaBebidas, listaPedidos);
 			}
-			menuAdmin(listaBebidas);
+			menuAdmin(listaBebidas, listaPedidos);
 			break;
 		case 3:
 			System.out.println("Ingrese marca:");
@@ -295,13 +273,13 @@ public class Main {
 			op=scan.next();
 			if (op== "Si") {
 
-				menuIngreso(listaBebidas);
+				menuIngreso(listaBebidas, listaPedidos);
 			}
-			menuAdmin(listaBebidas);
+			menuAdmin(listaBebidas, listaPedidos);
 			break;
 		}	
 	}
-	private static void menuStock(InventarioBebidas listaBebidas) {
+	private static void menuStock(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		int opcion;
 		System.out.println("Ingrese el codigo de la bebida:");
 		String codigoBebida = scan.nextLine();
@@ -314,9 +292,82 @@ public class Main {
 		System.out.println("Presione 1 para salir o cualquier otra tecla para reintentar");
 		opcion =scan.nextInt();
 		if (opcion == 1) {
-			menuAdmin(listaBebidas);
-		}else menuStock(listaBebidas);
+			menuAdmin(listaBebidas, listaPedidos);
+		}else menuStock(listaBebidas, listaPedidos);
 		}
 	}
-
+	
+	private static void mostrarPedidosCliente(Cliente cliente, HistorialPedidos listaPedidos) {
+		System.out.println("Listado de sus pedidos anteriores: \n");
+		String codigo = cliente.getCodigo();
+		listaPedidos.mostrarPedidosCliente(codigo);
+	}
+	
+	private static void imprimirFactura(float montoPedido, Pedido pedido) {
+		Date fecha = new Date();
+		System.out.println("¿Cómo desea abonar su pedido? \n1-Tarjeta \2-Efectivo");
+		int medioDePago = scan.nextInt();
+		Factura factura = new Factura(montoPedido,fecha, medioDePago, pedido);
+		factura.toString();
+	}
+	
+	private static void crearCliente(ListaClientes listaClientes) {
+		Cliente cliente = new Cliente();
+		System.out.println("Ingrese su nombre:");
+		cliente.setNombre(scan.nextLine());
+		System.out.println("Ingrese su apellido:");
+		cliente.setApellido(scan.nextLine());
+		System.out.println("Ingrese su número de DNI:");
+		cliente.setDni(scan.nextLine());
+		System.out.println("Ingrese su fecha de nacimiento:");
+		cliente.setNacimiento(scan.nextLine());
+		System.out.println("Ingrese una contraseña:");
+		cliente.setContraseña(scan.nextLine());
+		listaClientes.agregarCliente(cliente);
+		System.out.println("Su nombre de usuario será: "+cliente.getNombreUsuario());
+	}
+	
+	private static void iniciarSesion(ListaClientes listaClientes, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
+		System.out.println("Ingrese su nombre de usuario");
+		String nombreUsuario = scan.next(); 
+		System.out.println("Ingrese contraseña");
+		String password = scan.nextLine();
+		if (listaClientes.estaCliente(nombreUsuario, password)){
+			int i = listaClientes.devolverPosicionCliente(nombreUsuario);
+			menuCliente(listaClientes.devolverCliente(i), listaBebidas, listaPedidos);
+		}
+		else {
+			System.out.println("Nombre de usuario o contraseña no válidos, intente nuevamente");
+		}
+	}
+	private static void nuevoPedido(Pedido pedido, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
+		char continuar = 'S';
+		while (continuar == 'S') {
+			listaBebidas.mostrarInfoBebidas();
+			System.out.println("Ingrese el código de la bebida que desea agregar al pedido: ");
+			String codigo = scan.nextLine();
+			//Busca la bebida en el inventario y si la encuentra la agrega
+			if (listaBebidas.codigoExiste(codigo)) {
+				int i= listaBebidas.posicionPorCodigo(codigo);
+				pedido.agregarAlPedido(listaBebidas.devolverPorPosicion(i));
+			}
+			System.out.println("Desea agregar otra bebida al pedido? S/N");
+			scan.next().charAt(continuar);
+		}
+		float montoPedido = pedido.montoPedido();
+		System.out.println("El monto total del pedido es: $"+montoPedido);
+		listaPedidos.agregarPedido(pedido);
+		System.out.println("¿Cómo desea continuar? \n");
+		System.out.println("1 - Imprimir Factura.");
+		System.out.println("2 - Cancelar Pedido");
+		int opcionSeguir = scan.nextInt();
+		switch (opcionSeguir) {
+		case 1:
+			imprimirFactura(montoPedido, pedido);
+			break;
+		case 2:
+			listaPedidos.eliminarPedido(pedido);
+			break;
+		}
+	}
 }
