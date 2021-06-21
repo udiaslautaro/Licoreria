@@ -2,7 +2,9 @@ package model;
 
 import java.util.ArrayList;
 
-public class ListaClientes {
+import interfaces.IIndicadorPosicion;
+
+public class ListaClientes implements IIndicadorPosicion{
 	
 	ArrayList<Cliente> listaClientes;
 	
@@ -10,10 +12,19 @@ public class ListaClientes {
 		listaClientes = new ArrayList<Cliente>();
 	}
 	
-	//Cuando agrega un cliente genera un codigo y se lo asigna
+	//Cuando agrega un cliente genera un codigo y se lo asigna.
+	//Primero verifica que ese nombre no este repetido. Si lo está, entonces crea otro nombre con
+	//un número al final
 	public void agregarCliente(Cliente cliente) {
 		listaClientes.add(cliente);
-		cliente.setNombreUsuario(cliente.getNombre()+cliente.getApellido()); 
+		for(int i = 0; i < listaClientes.size(); i++) {
+			if( listaClientes.get(i).getNombre() == cliente.getNombre() && listaClientes.get(i).getApellido() == cliente.getApellido()) {
+				cliente.setNombreUsuario(cliente.getNombre()+cliente.getApellido()+i);
+			}
+			else {
+				cliente.setNombreUsuario(cliente.getNombre()+cliente.getApellido()); 
+			}
+		}
 		cliente.setCodigo("C000"+listaClientes.size()+1); //puse algo random, se puede cambiar
 	}
 	
@@ -37,7 +48,7 @@ public class ListaClientes {
 		return esta;
 	}
 	
-	public int devolverPosicionCliente(String nombreUsuario) {
+	public int devolverPosicion(String nombreUsuario) {
 		int pos = 0;
 		for (int i = 0; i < listaClientes.size(); i++) {
 			if (listaClientes.get(i).getNombreUsuario() == nombreUsuario) {
@@ -49,5 +60,9 @@ public class ListaClientes {
 	
 	public Cliente devolverCliente(int pos) {
 		return listaClientes.get(pos);
+	}
+	
+	public int totalClientes () {
+		return listaClientes.size();
 	}
 }

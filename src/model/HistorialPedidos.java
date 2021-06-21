@@ -25,6 +25,10 @@ public class HistorialPedidos {
 	}
 	
 	public void eliminarPedido(Pedido pedido) {
+		for(int i = 0; i < pedido.tamañoPedido(); i++) {
+			int cantUnidades = pedido.devolverElemento(i).getCantidad();
+			pedido.devolverElemento(i).sumarStock(cantUnidades);
+		}
 		listaPedidos.remove(pedido);
 	}
 }

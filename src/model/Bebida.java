@@ -10,6 +10,7 @@ public class Bebida {
 	private String origen;
 	private String codigo;
 	private double precio;
+	private int cantidad;
 	
 	
 	
@@ -73,6 +74,12 @@ public class Bebida {
 	public void setPrecio (double precio) {
 		this.precio = precio;
 	}
+	public void setCantidad(int cantidad) {
+		this.cantidad = cantidad;
+	}
+	public int getCantidad() {
+		return cantidad;
+	}
 	@Override
 	
 	public String toString() {
@@ -80,15 +87,18 @@ public class Bebida {
 				+ nombre + ", stock=" + stock + ", origen=" + origen + ", codigo=" + codigo + "]\n";
 	}
 	
-	public int restarStock() {
-		return this.stock-1;
+	public void restarStock(int cantidadUnidades) {
+		this.setStock(stock - cantidadUnidades);
 	}
 	
-	public int sumarStock() {
-		return this.stock+1;
+	public void sumarStock(int cantidadUnidades) {
+		this.setStock(stock +cantidadUnidades);
 	}
 	
 	public String infoBebida() {
 		return "Codigo: "+codigo + "Nombre: "+nombre+"Marca: "+marca+"Capacidad: "+capacidad+"Precio: "+precio+"\n";
+	}
+	public double precioPorCantidad(int cantidad) {
+		return this.precio*cantidad;
 	}
 }

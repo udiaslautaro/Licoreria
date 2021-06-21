@@ -24,27 +24,17 @@ public class Pedido {
 	}
 
 	//agrega una bebida al pedido
-	public void agregarAlPedido(Bebida bebida) {
-		if(bebida.getStock() > 0) {
-			pedido.add(bebida);
-			bebida.restarStock();
-		}
+	public void agregarAlPedido(Bebida bebida, int cantidad) {
+		pedido.add(bebida);
+		bebida.restarStock(cantidad);
 	}
 	
 	//elimina una bebida del pedido
-	public void elminarDelPedido(Bebida bebida) {
+	public void elminarDelPedido(Bebida bebida, int cantidad) {
 		pedido.remove(bebida);
-		bebida.sumarStock();
+		bebida.sumarStock(cantidad);
 	}
-	
-	//calcula el precio final del pedido
-	public float montoPedido() {
-		float monto = 0;
-		for (int i = 0; i < pedido.size(); i++) {
-			monto += pedido.get(i).getPrecio();
-		}
-		return monto;
-	}
+
 
 	public StringBuilder mostrarPedido() {
 		StringBuilder builder = new StringBuilder();
@@ -53,5 +43,10 @@ public class Pedido {
 		}
 		return builder;
 	}
-	
+	public int tamañoPedido() {
+		return pedido.size();
+	}
+	public Bebida devolverElemento(int i) {
+		return pedido.get(i);
+	}
 }

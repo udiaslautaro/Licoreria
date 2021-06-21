@@ -2,7 +2,9 @@ package model;
 
 import java.util.ArrayList;
 
-public class InventarioBebidas {
+import interfaces.IIndicadorPosicion;
+
+public class InventarioBebidas implements IIndicadorPosicion{
 	
 	ArrayList<Bebida> listaBebidas;
 	
@@ -44,7 +46,7 @@ public class InventarioBebidas {
 		return detalleBebida;
 	}
 	public void modificarStock(String codigo, int stock) {
-		int i= posicionPorCodigo(codigo);
+		int i= devolverPosicion(codigo);
 		listaBebidas.get(i).setStock(listaBebidas.get(i).getStock()+stock);
 		}
 		
@@ -58,7 +60,7 @@ public class InventarioBebidas {
 			}
 		return bool; 
 	}
-	public int posicionPorCodigo(String codigo) {
+	public int devolverPosicion(String codigo) {
 		int pos=-1;
 		for (int i = 0; i < listaBebidas.size(); i++) {
 			if (listaBebidas.get(i).getCodigo() == codigo) {
@@ -81,12 +83,17 @@ public class InventarioBebidas {
 		return listaBebidas.get(pos);
 	}
 	
+	//Muestra solo la informacion de las bebidas que hay en stock
 	public StringBuilder mostrarInfoBebidas() {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < listaBebidas.size(); i++) {
-			builder.append(listaBebidas.get(i).infoBebida());
+			if(listaBebidas.get(i).getStock() > 0){
+				builder.append(listaBebidas.get(i).infoBebida());
+			}
 		}
 		return builder;
 	}
+	
+
 }
  

@@ -1,5 +1,10 @@
 package app;
 import java.util.Scanner;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Date;
 import model.Cerveza;
 import model.Cliente;
@@ -55,13 +60,13 @@ public class Main {
 				case 2:
 					iniciarSesion(listaClientes, listaBebidas, listaPedidos);
 					break;
-				case 3 :
+				}
+			case 3 :
 					System.out.println("Adios!");
 					scan.next();
 					break;
-				}
-
 			}
+			
 		}else {
 			System.out.println("Opcion invalida!");
 			scan.next();
@@ -144,7 +149,7 @@ public class Main {
 		System.out.println("Ingrese el codigo de la bebida a la que desea modificarle el precio: ");
 		codigo = scan.nextLine();
 		if(listaBebidas.codigoExiste(codigo)) {
-			int i= listaBebidas.posicionPorCodigo(codigo);
+			int i= listaBebidas.devolverPosicion(codigo);
 			System.out.println("Ingrese nuevo precio");
 			precio=scan.nextFloat();
 			listaBebidas.modificarPrecio(precio, i);
@@ -165,7 +170,7 @@ public class Main {
 		System.out.println("Ingrese que operación desea realizar:");
 		System.out.println("1 - Realizar pedido.");
 		System.out.println("2 - Consultar pedidos anteriores.");
-		System.out.println("3 - Imprimir factura.");
+		System.out.println("3 - Cerrar Sesión.");
 		int opcion;
 		opcion = scan.nextInt();
 		switch (opcion) {
@@ -173,10 +178,14 @@ public class Main {
 			Pedido pedido = new Pedido(cliente);
 			nuevoPedido(pedido, listaBebidas, listaPedidos);
 			break;
-		
 		case 2:
-				mostrarPedidosCliente(cliente, listaPedidos);
+			mostrarPedidosCliente(cliente, listaPedidos);
 			break;
+		case 3: 
+			menu(listaBebidas, listaPedidos);
+		default:
+			System.out.println("Opción inválida. Intente nuevamente.");
+			menuCliente(cliente, listaBebidas, listaPedidos);
 		}
 	}
 
@@ -333,28 +342,38 @@ public class Main {
 		System.out.println("Ingrese contraseña");
 		String password = scan.nextLine();
 		if (listaClientes.estaCliente(nombreUsuario, password)){
-			int i = listaClientes.devolverPosicionCliente(nombreUsuario);
+			int i = listaClientes.devolverPosicion(nombreUsuario);
 			menuCliente(listaClientes.devolverCliente(i), listaBebidas, listaPedidos);
 		}
 		else {
 			System.out.println("Nombre de usuario o contraseña no válidos, intente nuevamente");
+			iniciarSesion(listaClientes, listaBebidas, listaPedidos);
 		}
 	}
 	private static void nuevoPedido(Pedido pedido, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		char continuar = 'S';
+		float montoPedido = 0;
 		while (continuar == 'S') {
 			listaBebidas.mostrarInfoBebidas();
 			System.out.println("Ingrese el código de la bebida que desea agregar al pedido: ");
 			String codigo = scan.nextLine();
-			//Busca la bebida en el inventario y si la encuentra la agrega
+			//Busca la bebida en el inventario y si tiene el stock que se busca,la agrega
 			if (listaBebidas.codigoExiste(codigo)) {
-				int i= listaBebidas.posicionPorCodigo(codigo);
-				pedido.agregarAlPedido(listaBebidas.devolverPorPosicion(i));
+				System.out.println("Ingrese cantidad de unidades: ");
+				int cantidad = scan.nextInt();
+				int i = listaBebidas.devolverPosicion(codigo);
+				if( listaBebidas.devolverPorPosicion(i).getStock() > cantidad) {
+					listaBebidas.devolverPorPosicion(i).setCantidad(cantidad);
+					pedido.agregarAlPedido(listaBebidas.devolverPorPosicion(i), cantidad);
+					montoPedido += listaBebidas.devolverPorPosicion(i).precioPorCantidad(cantidad);
+				}
+				else {
+					System.out.println("Lo sentimos, no tenemos stock suficiente de ese producto.");
+				}
 			}
 			System.out.println("Desea agregar otra bebida al pedido? S/N");
 			scan.next().charAt(continuar);
 		}
-		float montoPedido = pedido.montoPedido();
 		System.out.println("El monto total del pedido es: $"+montoPedido);
 		listaPedidos.agregarPedido(pedido);
 		System.out.println("¿Cómo desea continuar? \n");
@@ -370,4 +389,61 @@ public class Main {
 			break;
 		}
 	}
+
+	/*private static JSONArray ClientesToJSON(ListaClientes listaClientes) {
+		JSONArray jsonArray = new JSONArray();
+		for (int i = 0; i < listaClientes.totalClientes(); i++) {
+			JSONObject jsonObject = new JSONObject();
+			try {
+				jsonObject.put("Codigo", listaClientes.devolverCliente(i).getCodigo());
+				jsonObject.put("Nombre", listaClientes.devolverCliente(i).getNombre());
+				jsonObject.put("Apellido", listaClientes.devolverCliente(i).getApellido());
+				jsonObject.put("DNI", listaClientes.devolverCliente(i).getDni());
+				jsonObject.put("Nacimiento", listaClientes.devolverCliente(i).getNacimiento());
+				jsonObject.put("Nombre de Usuario", listaClientes.devolverCliente(i).getNombreUsuario());
+				jsonObject.put("Contraseña", listaClientes.devolverCliente(i).getContraseña());
+				
+				jsonArray.put(jsonObject);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		return jsonArray;	
+	}*/
+	/*private static JSONArray inventarioToJSON (InventarioBebidas listaBebidas) {
+		JSONArray jsonArray = new JSONArray();
+		for (int i = 0; i < listaBebidas.totalBebidas(); i++) {
+			JSONObject jsonObject = new JSONObject();
+			try {
+				jsonObject.put("Codigo", listaBebidas.devolverPorPosicion(i).getCodigo());
+				jsonObject.put("Nombre", listaBebidas.devolverPorPosicion(i).getNombre());
+				jsonObject.put("Marca", listaBebidas.devolverPorPosicion(i).getMarca());
+				jsonObject.put("Capacidad", listaBebidas.devolverPorPosicion(i).getCapacidad());
+				jsonObject.put("Graduacion", listaBebidas.devolverPorPosicion(i).getGraduacion());
+				jsonObject.put("Stock", listaBebidas.devolverPorPosicion(i).getStock());
+				jsonObject.put("Origen", listaBebidas.devolverPorPosicion(i).getOrigen());
+				jsonObject.put("Precio", listaBebidas.devolverPorPosicion(i).getPrecio());
+				
+				if(listaBebidas.devolverPorPosicion(i) instanceof Vino) {
+					jsonObject.put("Año", ((Vino) listaBebidas.devolverPorPosicion(i)).getAño());
+					jsonObject.put("Bodega", ((Vino) listaBebidas.devolverPorPosicion(i)).getBodega());
+					jsonObject.put("Tipo", ((Vino) listaBebidas.devolverPorPosicion(i)).getTipo());
+				}
+				else {
+					if(listaBebidas.devolverPorPosicion(i) instanceof Cerveza) {
+						jsonObject.put("Variedad", ((Cerveza) listaBebidas.devolverPorPosicion(i)).getVariedad());
+					}
+					else {
+						jsonObject.put("Tipo", ((Licor) listaBebidas.devolverPorPosicion(i)).getTipo());
+					}
+				}
+				jsonArray.put(jsonObject);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		return jsonArray;
+	}*/
 }
