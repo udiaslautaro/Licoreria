@@ -9,6 +9,7 @@ public class Cliente {
 	private String nacimiento;
 	private String nombre;
 	private String nombreUsuario;
+	public Pila<Factura> factura;
 	
 	
 	public String getNombre() {
@@ -53,6 +54,7 @@ public class Cliente {
 	public void setNombreUsuario(String nombreUsuario) {
 		this.nombreUsuario = nombreUsuario;
 	}
+	
 	public Cliente(String apellido, String dni, String codigo, String contraseña, String nacimiento, String nombre, String nombreUsuario) {
 		super();
 		this.apellido = apellido;
@@ -62,6 +64,7 @@ public class Cliente {
 		this.nacimiento = nacimiento;
 		this.nombre = nombre;
 		this.nombreUsuario = nombreUsuario;
+		this.factura= new Pila<Factura>();
 	}
 	
 	public Cliente() {

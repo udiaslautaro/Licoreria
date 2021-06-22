@@ -14,6 +14,7 @@ import model.InventarioBebidas;
 import model.Licor;
 import model.ListaClientes;
 import model.Pedido;
+import model.Pila;
 import model.Vino;
 
 public class Main {
@@ -62,11 +63,11 @@ public class Main {
 					break;
 				}
 			case 3 :
-					System.out.println("Adios!");
-					scan.next();
-					break;
+				System.out.println("Adios!");
+				scan.next();
+				break;
 			}
-			
+
 		}else {
 			System.out.println("Opcion invalida!");
 			scan.next();
@@ -105,6 +106,9 @@ public class Main {
 			case 6:
 				menu(listaBebidas, listaPedidos);
 				break;
+			default:
+				System.out.println("Opción inválida. Intente nuevamente.");
+				menu(listaBebidas, listaPedidos);
 
 			}		
 		}
@@ -162,7 +166,7 @@ public class Main {
 			}else {
 				menuAdmin(listaBebidas, listaPedidos);
 			}
-			
+
 		}
 	}
 	private static void menuCliente(Cliente cliente, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
@@ -170,18 +174,21 @@ public class Main {
 		System.out.println("Ingrese que operación desea realizar:");
 		System.out.println("1 - Realizar pedido.");
 		System.out.println("2 - Consultar pedidos anteriores.");
-		System.out.println("3 - Cerrar Sesión.");
+		System.out.println("3 - Mostrar ultimo pedido.");
+		System.out.println("4 - Cerrar Sesión.");
 		int opcion;
 		opcion = scan.nextInt();
 		switch (opcion) {
 		case 1:
 			Pedido pedido = new Pedido(cliente);
-			nuevoPedido(pedido, listaBebidas, listaPedidos);
+			nuevoPedido(pedido, listaBebidas, listaPedidos, cliente);
 			break;
 		case 2:
-			mostrarPedidosCliente(cliente, listaPedidos);
+			mostrarPedidosCliente(cliente);
 			break;
-		case 3: 
+		case 3: verUltimaFactura(cliente);
+			break;
+		case 4: 
 			menu(listaBebidas, listaPedidos);
 		default:
 			System.out.println("Opción inválida. Intente nuevamente.");
@@ -305,21 +312,35 @@ public class Main {
 		}else menuStock(listaBebidas, listaPedidos);
 		}
 	}
-	
-	private static void mostrarPedidosCliente(Cliente cliente, HistorialPedidos listaPedidos) {
+
+	private static void mostrarPedidosCliente(Cliente cliente) {
 		System.out.println("Listado de sus pedidos anteriores: \n");
-		String codigo = cliente.getCodigo();
-		listaPedidos.mostrarPedidosCliente(codigo);
+		Pila<Factura> aux =new Pila<Factura>();
+		while (!cliente.factura.pilaVacia()) {
+			aux.apilar(cliente.factura.verUltima());
+			cliente.factura.toString();
+			cliente.factura.desapilar();
+		}
+		while(!aux.pilaVacia()) {
+			cliente.factura.apilar(aux.verUltima());
+			aux.desapilar();
+		}
+		//String codigo = cliente.getCodigo();
+		//listaPedidos.mostrarPedidosCliente(codigo);
 	}
-	
-	private static void imprimirFactura(float montoPedido, Pedido pedido) {
+	private static void verUltimaFactura(Cliente cliente) {
+		System.out.println("\nSu ultima factura es: \n" + cliente.factura.verUltima().toString());
+	}
+
+	private static void imprimirFactura(float montoPedido, Pedido pedido, Cliente cliente) {
 		Date fecha = new Date();
 		System.out.println("¿Cómo desea abonar su pedido? \n1-Tarjeta \2-Efectivo");
 		int medioDePago = scan.nextInt();
 		Factura factura = new Factura(montoPedido,fecha, medioDePago, pedido);
 		factura.toString();
+		cliente.factura.apilar(factura);
 	}
-	
+
 	private static void crearCliente(ListaClientes listaClientes) {
 		Cliente cliente = new Cliente();
 		System.out.println("Ingrese su nombre:");
@@ -333,9 +354,9 @@ public class Main {
 		System.out.println("Ingrese una contraseña:");
 		cliente.setContraseña(scan.nextLine());
 		listaClientes.agregarCliente(cliente);
-		System.out.println("Su nombre de usuario será: "+cliente.getNombreUsuario());
+		System.out.println("Su nombre de usuario será: " +cliente.getNombreUsuario());
 	}
-	
+
 	private static void iniciarSesion(ListaClientes listaClientes, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		System.out.println("Ingrese su nombre de usuario");
 		String nombreUsuario = scan.next(); 
@@ -350,7 +371,7 @@ public class Main {
 			iniciarSesion(listaClientes, listaBebidas, listaPedidos);
 		}
 	}
-	private static void nuevoPedido(Pedido pedido, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
+	private static void nuevoPedido(Pedido pedido, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, Cliente cliente) {
 		char continuar = 'S';
 		float montoPedido = 0;
 		while (continuar == 'S') {
@@ -382,7 +403,7 @@ public class Main {
 		int opcionSeguir = scan.nextInt();
 		switch (opcionSeguir) {
 		case 1:
-			imprimirFactura(montoPedido, pedido);
+			imprimirFactura(montoPedido, pedido, cliente);
 			break;
 		case 2:
 			listaPedidos.eliminarPedido(pedido);
@@ -402,7 +423,7 @@ public class Main {
 				jsonObject.put("Nacimiento", listaClientes.devolverCliente(i).getNacimiento());
 				jsonObject.put("Nombre de Usuario", listaClientes.devolverCliente(i).getNombreUsuario());
 				jsonObject.put("Contraseña", listaClientes.devolverCliente(i).getContraseña());
-				
+
 				jsonArray.put(jsonObject);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -424,7 +445,7 @@ public class Main {
 				jsonObject.put("Stock", listaBebidas.devolverPorPosicion(i).getStock());
 				jsonObject.put("Origen", listaBebidas.devolverPorPosicion(i).getOrigen());
 				jsonObject.put("Precio", listaBebidas.devolverPorPosicion(i).getPrecio());
-				
+
 				if(listaBebidas.devolverPorPosicion(i) instanceof Vino) {
 					jsonObject.put("Año", ((Vino) listaBebidas.devolverPorPosicion(i)).getAño());
 					jsonObject.put("Bodega", ((Vino) listaBebidas.devolverPorPosicion(i)).getBodega());
