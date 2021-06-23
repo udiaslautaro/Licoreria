@@ -8,14 +8,14 @@ public class Bebida {
 	private String nombre;
 	private int stock;
 	private String origen;
-	private String codigo;
+	private int codigo;
 	private double precio;
 	private int cantidad;
 	
 	
 	
 	public Bebida(String graduacion, String marca, float capacidad, String nombre, int stock, String origen,
-			String codigo, double precio) {
+			int codigo2, double precio) {
 		super();
 		this.graduacion = graduacion;
 		this.marca = marca;
@@ -23,7 +23,7 @@ public class Bebida {
 		this.nombre = nombre;
 		this.stock = stock;
 		this.origen = origen;
-		this.codigo = codigo;
+		this.codigo = codigo2;
 		this.precio = precio;
 	}
 	public String getGraduacion() {
@@ -62,10 +62,10 @@ public class Bebida {
 	public void setOrigen(String origen) {
 		this.origen = origen;
 	}
-	public String getCodigo() {
+	public int getCodigo() {
 		return codigo;
 	}
-	public void setCodigo(String codigo) {
+	public void setCodigo(int codigo) {
 		this.codigo = codigo;
 	}
 	public double getPrecio() {

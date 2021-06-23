@@ -10,8 +10,8 @@ public class Cerveza extends Bebida{
 	}
 
 	public Cerveza(String graduacion, String marca, float capacidad, String nombre, int stock, String origen,
-			String codigo, double precio, String Variedad) {
-		super(graduacion, marca, capacidad, nombre, stock, origen, codigo, precio);
+			int codigoCerveza, double precio, String Variedad) {
+		super(graduacion, marca, capacidad, nombre, stock, origen, codigoCerveza, precio);
 		this.variedad = Variedad;
 	}
 

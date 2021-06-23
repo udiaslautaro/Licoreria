@@ -18,7 +18,7 @@ public class InventarioBebidas implements IIndicadorPosicion{
 	}
 	
 	//elimina del inventario de bebidas
-	public void eliminarBebidaPorCodigo (String codigo) {
+	public void eliminarBebidaPorCodigo (int codigo) {
 		for(int i = 0; i < listaBebidas.size(); i++) {
 			if (listaBebidas.get(i).getCodigo() == codigo) {
 				listaBebidas.remove(i);
@@ -36,7 +36,7 @@ public class InventarioBebidas implements IIndicadorPosicion{
 	}
 	
 	//busca una bebida por codigo
-	public String buscarPorCodigo(String codigo) {
+	public String buscarPorCodigo(int codigo) {
 		String detalleBebida = "";
 		for (int i = 0; i < listaBebidas.size(); i++) {
 			if (listaBebidas.get(i).getCodigo() == codigo) {
@@ -45,13 +45,13 @@ public class InventarioBebidas implements IIndicadorPosicion{
 		}
 		return detalleBebida;
 	}
-	public void modificarStock(String codigo, int stock) {
-		int i= devolverPosicion(codigo);
+	public void modificarStock(int codigoBebida, int stock) {
+		int i= devolverPosicion(codigoBebida);
 		listaBebidas.get(i).setStock(listaBebidas.get(i).getStock()+stock);
 		}
 		
 		
-	public boolean codigoExiste (String codigo) {
+	public boolean codigoExiste (int codigo) {
 		boolean bool=false;
 		for (int i=0; i< listaBebidas.size(); i++) {
 			if (listaBebidas.get(i).getCodigo() == codigo) {
@@ -60,10 +60,10 @@ public class InventarioBebidas implements IIndicadorPosicion{
 			}
 		return bool; 
 	}
-	public int devolverPosicion(String codigo) {
+	public int devolverPosicion(int codigoBebida) {
 		int pos=-1;
 		for (int i = 0; i < listaBebidas.size(); i++) {
-			if (listaBebidas.get(i).getCodigo() == codigo) {
+			if (listaBebidas.get(i).getCodigo() == codigoBebida) {
 				pos = i;
 			}
 		}
@@ -92,6 +92,12 @@ public class InventarioBebidas implements IIndicadorPosicion{
 			}
 		}
 		return builder;
+	}
+
+	@Override
+	public int devolverPosicion(String elemento) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 

@@ -5,7 +5,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Date;
+
+import model.Archivo;
 import model.Cerveza;
 import model.Cliente;
 import model.Factura;
@@ -20,17 +23,18 @@ import model.Vino;
 public class Main {
 
 	public static Scanner scan = new Scanner(System.in);
-
+	public static Archivo archClientes = new Archivo("Clientes.dat");
 
 	public static void main(String[] args) {
 		HistorialPedidos listaPedidos = new HistorialPedidos();
 		InventarioBebidas listaBebidas = new InventarioBebidas();
-		menu(listaBebidas, listaPedidos);
+		ListaClientes listaClientes = new ListaClientes();
+		menu(listaBebidas, listaPedidos, listaClientes);
 		scan.close();
 	}
 
 
-	public static void menu(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
+	public static void menu(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 
 		System.out.println("Bienvenido");
 		System.out.println("1- Ingresar como Administrador");
@@ -50,7 +54,6 @@ public class Main {
 				}else System.out.println("Contraseña incorrecta");
 				break;
 			case 2:
-				ListaClientes listaClientes = new ListaClientes();
 				System.out.println("1 - Registrarse como cliente");
 				System.out.println("2 - Iniciar sesión");
 				int operacion = scan.nextInt();
@@ -63,7 +66,7 @@ public class Main {
 					break;
 				}
 			case 3 :
-				System.out.println("Adios!");
+				salvandoDatos(listaClientes);
 				scan.next();
 				break;
 			}
@@ -71,10 +74,21 @@ public class Main {
 		}else {
 			System.out.println("Opcion invalida!");
 			scan.next();
-			menu(listaBebidas, listaPedidos);
+			menu(listaBebidas, listaPedidos, listaClientes);
 		}
 	}
 
+
+	private static void salvandoDatos(ListaClientes listaClientes) {
+		for(int i=0; i< listaClientes.totalClientes(); i++) {
+			archClientes.grabarEnArchivo(listaClientes.devolverCliente(i));
+		}
+		try {
+			archClientes.cerrarStream(archClientes);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private static void menuAdmin(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		int opcion=0;
@@ -104,19 +118,20 @@ public class Main {
 				eliminarBebida(listaBebidas, listaPedidos);
 				break;
 			case 6:
-				menu(listaBebidas, listaPedidos);
+				menu(listaBebidas, listaPedidos, null);
 				break;
 			default:
 				System.out.println("Opción inválida. Intente nuevamente.");
-				menu(listaBebidas, listaPedidos);
+				menu(listaBebidas, listaPedidos, null);
 
 			}		
 		}
 	}
 	private static void eliminarBebida(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
-		String confirm, codigo;
+		String confirm;
+		int codigo;
 		System.out.println("Ingrese el codigo de la bebida a eliminar");
-		codigo =scan.nextLine();
+		codigo =scan.nextInt();
 		if (listaBebidas.codigoExiste(codigo)) {
 			System.out.println("Esta a punto de eliminar "+ listaBebidas.buscarPorCodigo(codigo) + "Para confirmar ingrese Si");
 			confirm=scan.nextLine();
@@ -148,10 +163,10 @@ public class Main {
 
 	}
 	private static void menuPrecio(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
-		String codigo, opcion;
+		String opcion;
 		float precio;
 		System.out.println("Ingrese el codigo de la bebida a la que desea modificarle el precio: ");
-		codigo = scan.nextLine();
+		int codigo = scan.nextInt();
 		if(listaBebidas.codigoExiste(codigo)) {
 			int i= listaBebidas.devolverPosicion(codigo);
 			System.out.println("Ingrese nuevo precio");
@@ -187,9 +202,9 @@ public class Main {
 			mostrarPedidosCliente(cliente);
 			break;
 		case 3: verUltimaFactura(cliente);
-			break;
+		break;
 		case 4: 
-			menu(listaBebidas, listaPedidos);
+			menu(listaBebidas, listaPedidos, null);
 		default:
 			System.out.println("Opción inválida. Intente nuevamente.");
 			menuCliente(cliente, listaBebidas, listaPedidos);
@@ -198,7 +213,7 @@ public class Main {
 
 	private static void menuIngreso(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		int opcion;
-		String op;
+		char op = 0;
 		System.out.println("1- Vino");
 		System.out.println("2- Cerveza");
 		System.out.println("3- Licor");
@@ -225,80 +240,108 @@ public class Main {
 			int stock= scan.nextInt();
 			System.out.println("Ingrese el precio por unidad:");
 			double precio=scan.nextDouble();
-			String codigo="aca va un codigo generado secuencialmente cuando se mete el objeto al array de stock";
+			int codigo=1;
+			while (listaBebidas.codigoExiste(codigo)) {
+				codigo++;
+			}
 			/*Vino vino1 = new Vino(graduacion, marca, capacidad, nombre, stock, origen,
 					 codigo,precio , tipo, bodega, año);*/
 			//agrega un nuevo vino al inventario
 			listaBebidas.agregarBebida(new Vino(graduacion, marca, capacidad, nombre, stock, origen,
 					codigo,precio , tipo, bodega, año));
-			System.out.println("Desea agregar otra bebida? escriba Si o cualquier tecla para volver al menu");
-			op=scan.nextLine();
-			if (op== "Si") {
-				menuIngreso(listaBebidas, listaPedidos);
-			}
-			menuAdmin(listaBebidas, listaPedidos);
+			System.out.println("Desea agregar otra bebida? S/N");
+			op=scan.next().charAt(op);
+			switch (op) {
+			case 's': menuIngreso(listaBebidas, listaPedidos);
 			break;
-		case 2:
-			System.out.println("Ingrese marca:");
-			String marcaCerveza= scan.nextLine();
-			System.out.println("Ingrese nombre: ");
-			String nombreCerveza=scan.nextLine();
-			System.out.println("Ingrese que variedad de cerveza es:");
-			String variedad=scan.nextLine();
-			System.out.println("Ingrese origen:");
-			String origenCerveza=scan.nextLine();
-			System.out.println("Ingrese graduacion alcoholica:");
-			String graduacionCerveza=scan.nextLine();
-			System.out.println("Ingrese capacidad:");
-			float capacidadCerveza= scan.nextFloat();
-			System.out.println("Ingrese cantidad de stock inicial:");
-			int stockCerveza= scan.nextInt();
-			System.out.println("Ingrese el precio por unidad:");
-			double precioCerveza=scan.nextDouble();
-			String codigoCerveza = "aca va el codigo";
-			//Cerveza cerveza1 = new Cerveza(graduacionCerveza, marcaCerveza, capacidadCerveza, nombreCerveza, stockCerveza, origenCerveza, codigoCerveza, precioCerveza, variedad);
-			//agrega al inventario un nuevo tipo de cerveza
-			listaBebidas.agregarBebida(new Cerveza(graduacionCerveza, marcaCerveza, capacidadCerveza, nombreCerveza, stockCerveza, origenCerveza, codigoCerveza, precioCerveza, variedad));
-			System.out.println("Desea agregar otra bebida? escriba Si o cualquier tecla para volver al menu");
-			op=scan.nextLine();
-			if (op== "Si") {
-				menuIngreso(listaBebidas, listaPedidos);
-			}
-			menuAdmin(listaBebidas, listaPedidos);
-			break;
-		case 3:
-			System.out.println("Ingrese marca:");
-			String marcaLicor= scan.nextLine();
-			System.out.println("Ingrese nombre:");
-			String nombreLicor= scan.nextLine();
-			System.out.println("Ingrse tipo de licor: ");
-			String tipoLicor= scan.nextLine();
-			System.out.println("Ingrese origen: ");
-			String origenLicor= scan.nextLine();
-			System.out.println("Ingrese graduacion alcoholica: ");
-			String graduacionLicor= scan.nextLine();
-			System.out.println("Ingrese capacidad: ");
-			float capacidadLicor = scan.nextFloat();
-			System.out.println("Ingrese cantidad de stock inicial: ");
-			int stockLicor= scan.nextInt();
-			System.out.println("Ingrese el precio por unidad: ");
-			double precioLicor = scan.nextDouble();
-			String codigoLicor= "aca va el codigo";
-			listaBebidas.agregarBebida(new Licor(graduacionLicor, marcaLicor, capacidadLicor,nombreLicor, stockLicor, origenLicor, codigoLicor, precioLicor, tipoLicor ));
-			System.out.println("Desea agregar otra bebida? escriba Si o cualquier tecla para volver al menu");
-			op=scan.next();
-			if (op== "Si") {
+			case 'n':		
+				menuAdmin(listaBebidas, listaPedidos);
+				break;
+			default: 
+				System.out.println("Opcion Incorrecta volviendo al menu principal");
+				menuAdmin(listaBebidas, listaPedidos);
+				break;
+			case 2:
+				System.out.println("Ingrese marca:");
+				String marcaCerveza= scan.nextLine();
+				System.out.println("Ingrese nombre: ");
+				String nombreCerveza=scan.nextLine();
+				System.out.println("Ingrese que variedad de cerveza es:");
+				String variedad=scan.nextLine();
+				System.out.println("Ingrese origen:");
+				String origenCerveza=scan.nextLine();
+				System.out.println("Ingrese graduacion alcoholica:");
+				String graduacionCerveza=scan.nextLine();
+				System.out.println("Ingrese capacidad:");
+				float capacidadCerveza= scan.nextFloat();
+				System.out.println("Ingrese cantidad de stock inicial:");
+				int stockCerveza= scan.nextInt();
+				System.out.println("Ingrese el precio por unidad:");
+				double precioCerveza=scan.nextDouble();
+				int codigoCerveza=1;
+				while (listaBebidas.codigoExiste(codigoCerveza)) {
+					codigoCerveza++;
+				}
+				//Cerveza cerveza1 = new Cerveza(graduacionCerveza, marcaCerveza, capacidadCerveza, nombreCerveza, stockCerveza, origenCerveza, codigoCerveza, precioCerveza, variedad);
+				//agrega al inventario un nuevo tipo de cerveza
+				listaBebidas.agregarBebida(new Cerveza(graduacionCerveza, marcaCerveza, capacidadCerveza, nombreCerveza, stockCerveza, origenCerveza, codigoCerveza, precioCerveza, variedad));
 
-				menuIngreso(listaBebidas, listaPedidos);
+				System.out.println("Desea agregar otra bebida? S/N");
+				op=scan.next().charAt(op);
+				switch (op) {
+				case 's': menuIngreso(listaBebidas, listaPedidos);
+				break;
+				case 'n':		
+					menuAdmin(listaBebidas, listaPedidos);
+					break;
+				default: 
+					System.out.println("Opcion Incorrecta volviendo al menu principal");
+					menuAdmin(listaBebidas, listaPedidos);
+					break;
+				}
+			case 3:
+				System.out.println("Ingrese marca:");
+				String marcaLicor= scan.nextLine();
+				System.out.println("Ingrese nombre:");
+				String nombreLicor= scan.nextLine();
+				System.out.println("Ingrse tipo de licor: ");
+				String tipoLicor= scan.nextLine();
+				System.out.println("Ingrese origen: ");
+				String origenLicor= scan.nextLine();
+				System.out.println("Ingrese graduacion alcoholica: ");
+				String graduacionLicor= scan.nextLine();
+				System.out.println("Ingrese capacidad: ");
+				float capacidadLicor = scan.nextFloat();
+				System.out.println("Ingrese cantidad de stock inicial: ");
+				int stockLicor= scan.nextInt();
+				System.out.println("Ingrese el precio por unidad: ");
+				double precioLicor = scan.nextDouble();
+				int codigoLicor=1;
+				while (listaBebidas.codigoExiste(codigoLicor)) {
+					codigoLicor++;
+				}
+				listaBebidas.agregarBebida(new Licor(graduacionLicor, marcaLicor, capacidadLicor,nombreLicor, stockLicor, origenLicor, codigoLicor, precioLicor, tipoLicor ));
+				System.out.println("Desea agregar otra bebida? S/N");
+				op=scan.next().charAt(op);
+				switch (op) {
+				case 's': menuIngreso(listaBebidas, listaPedidos);
+				break;
+				case 'n':		
+					menuAdmin(listaBebidas, listaPedidos);
+					break;
+				default: 
+					System.out.println("Opcion Incorrecta volviendo al menu principal");
+					menuAdmin(listaBebidas, listaPedidos);
+					break;
+				}
 			}
-			menuAdmin(listaBebidas, listaPedidos);
-			break;
 		}	
+
 	}
 	private static void menuStock(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		int opcion;
 		System.out.println("Ingrese el codigo de la bebida:");
-		String codigoBebida = scan.nextLine();
+		int codigoBebida = scan.nextInt();
 		if (listaBebidas.codigoExiste(codigoBebida)== true){
 			System.out.println("Ingrese stock a agregar: ");
 			int stockBebida = scan.nextInt();
@@ -377,7 +420,7 @@ public class Main {
 		while (continuar == 'S') {
 			listaBebidas.mostrarInfoBebidas();
 			System.out.println("Ingrese el código de la bebida que desea agregar al pedido: ");
-			String codigo = scan.nextLine();
+			int codigo = scan.nextInt();
 			//Busca la bebida en el inventario y si tiene el stock que se busca,la agrega
 			if (listaBebidas.codigoExiste(codigo)) {
 				System.out.println("Ingrese cantidad de unidades: ");
