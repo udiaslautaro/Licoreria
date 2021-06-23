@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import org.json.JSONArray;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -20,7 +23,7 @@ public class Archivo {
 	private ObjectInputStream objInput;
 	private ObjectOutputStream objOutput;
 
-	public Archivo(File arch, FileInputStream fInput, FileOutputStream fOutput, DataInputStream dInput,
+	/**public Archivo(File arch, FileInputStream fInput, FileOutputStream fOutput, DataInputStream dInput,
 			DataOutputStream dOutput, ObjectInputStream objInput, ObjectOutputStream objOutput) {
 		super();
 		this.arch = arch;
@@ -30,7 +33,7 @@ public class Archivo {
 		this.dOutput = dOutput;
 		this.objInput = objInput;
 		this.objOutput = objOutput;
-	}
+	}*/
 	public void crearFichero(String nombre) {
 		File arch= new File(nombre);
 	}	
@@ -68,12 +71,23 @@ public class Archivo {
 			e.printStackTrace();
 		}
 	}
+	public void grabarJSONEnArchivo(JSONArray stock) {
+		try {
+			objOutput.writeObject(stock);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	public void cerrarStream(Archivo archivo) throws IOException {
 		archivo.objOutput.close();
 	}
 
-	public void cargarListaArchivo(ObjectInputStream objInput) {
-	//	objInput.readObject(objInput);
-		
+	public Object cargarListaArchivo(Archivo archivo) throws ClassNotFoundException {
+	try {	
+		return objInput.readObject();
+	}catch (IOException e) {
+		e.printStackTrace();
+	}
+	return null;
 	}
 }

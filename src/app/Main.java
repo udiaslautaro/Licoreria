@@ -24,16 +24,18 @@ public class Main {
 
 	public static Scanner scan = new Scanner(System.in);
 	public static Archivo archClientes = new Archivo("Clientes.dat");
-
-	public static void main(String[] args) {
+	public static Archivo archStock =new Archivo("Stock.dat");
+	
+	public static void main(String[] args) throws ClassNotFoundException {
 		HistorialPedidos listaPedidos = new HistorialPedidos();
 		InventarioBebidas listaBebidas = new InventarioBebidas();
 		ListaClientes listaClientes = new ListaClientes();
+		cargarListas(listaClientes, listaBebidas);
 		menu(listaBebidas, listaPedidos, listaClientes);
 		scan.close();
 	}
 
-
+	
 	public static void menu(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 
 		System.out.println("Bienvenido");
@@ -45,13 +47,7 @@ public class Main {
 		if (opcion == 1 || opcion == 2 || opcion == 3) {
 			switch (opcion) {
 			case 1: 
-				scan.nextLine();	
-				System.out.println("Ingrese Contraseña de administrador: ");
-				int contraseña;
-				contraseña=scan.nextInt();
-				if (contraseña == 1234){
-					menuAdmin(listaBebidas, listaPedidos);
-				}else System.out.println("Contraseña incorrecta");
+				adminLogin(listaBebidas, listaPedidos);
 				break;
 			case 2:
 				System.out.println("1 - Registrarse como cliente");
@@ -66,7 +62,7 @@ public class Main {
 					break;
 				}
 			case 3 :
-				salvandoDatos(listaClientes);
+				salvandoDatos(listaClientes, listaBebidas);
 				scan.next();
 				break;
 			}
@@ -77,9 +73,17 @@ public class Main {
 			menu(listaBebidas, listaPedidos, listaClientes);
 		}
 	}
+	private static void adminLogin(InventarioBebidas listaBebidas,HistorialPedidos listaPedidos) {
+		scan.nextLine();	
+		System.out.println("Ingrese Contraseña de administrador: ");
+		int contraseña;
+		contraseña=scan.nextInt();
+		if (contraseña == 1234){
+			menuAdmin(listaBebidas, listaPedidos);
+		}else System.out.println("Contraseña incorrecta");
+	}
 
-
-	private static void salvandoDatos(ListaClientes listaClientes) {
+	private static void salvandoDatos(ListaClientes listaClientes, InventarioBebidas listaBebidas) {
 		for(int i=0; i< listaClientes.totalClientes(); i++) {
 			archClientes.grabarEnArchivo(listaClientes.devolverCliente(i));
 		}
@@ -88,7 +92,22 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		try {
+			JSONArray stock = new JSONArray(inventarioToJSON(listaBebidas));
+			archStock.grabarJSONEnArchivo(stock);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
+	private static void cargarListas(ListaClientes listaClientes, InventarioBebidas listaBebidas) throws ClassNotFoundException {
+		do {
+			listaClientes.agregarCliente((Cliente)archClientes.cargarListaArchivo(archClientes));
+		}while (archClientes.cargarListaArchivo(archClientes)!= null);
+		
+		}
+	
 
 	private static void menuAdmin(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		int opcion=0;
@@ -221,19 +240,19 @@ public class Main {
 		switch (opcion) {
 		case 1: 
 			System.out.println("Ingrese marca:");
-			String marca= scan.nextLine();
+			String marca= scan.next();
 			System.out.println("Ingrese nombre: ");
-			String nombre=scan.nextLine();
+			String nombre=scan.next();
 			System.out.println("Ingrese origen:");
-			String origen=scan.nextLine();
+			String origen=scan.next();
 			System.out.println("Ingrese bodega:");
-			String bodega=scan.nextLine();
+			String bodega=scan.next();
 			System.out.println("Ingrese la variedad de vino:");
-			String tipo=scan.nextLine();
+			String tipo=scan.next();
 			System.out.println("Ingrese cosecha:");
 			int año = scan.nextInt();
 			System.out.println("Ingrese graduacion alcoholica:");
-			String graduacion=scan.nextLine();
+			String graduacion=scan.next();
 			System.out.println("Ingrese capacidad:");
 			float capacidad= scan.nextFloat();
 			System.out.println("Ingrese cantidad de stock inicial:");
@@ -263,15 +282,15 @@ public class Main {
 				break;
 			case 2:
 				System.out.println("Ingrese marca:");
-				String marcaCerveza= scan.nextLine();
+				String marcaCerveza= scan.next();
 				System.out.println("Ingrese nombre: ");
-				String nombreCerveza=scan.nextLine();
+				String nombreCerveza=scan.next();
 				System.out.println("Ingrese que variedad de cerveza es:");
-				String variedad=scan.nextLine();
+				String variedad=scan.next();
 				System.out.println("Ingrese origen:");
-				String origenCerveza=scan.nextLine();
+				String origenCerveza=scan.next();
 				System.out.println("Ingrese graduacion alcoholica:");
-				String graduacionCerveza=scan.nextLine();
+				String graduacionCerveza=scan.next();
 				System.out.println("Ingrese capacidad:");
 				float capacidadCerveza= scan.nextFloat();
 				System.out.println("Ingrese cantidad de stock inicial:");
@@ -301,15 +320,15 @@ public class Main {
 				}
 			case 3:
 				System.out.println("Ingrese marca:");
-				String marcaLicor= scan.nextLine();
+				String marcaLicor= scan.next();
 				System.out.println("Ingrese nombre:");
-				String nombreLicor= scan.nextLine();
+				String nombreLicor= scan.next();
 				System.out.println("Ingrse tipo de licor: ");
-				String tipoLicor= scan.nextLine();
+				String tipoLicor= scan.next();
 				System.out.println("Ingrese origen: ");
-				String origenLicor= scan.nextLine();
+				String origenLicor= scan.next();
 				System.out.println("Ingrese graduacion alcoholica: ");
-				String graduacionLicor= scan.nextLine();
+				String graduacionLicor= scan.next();
 				System.out.println("Ingrese capacidad: ");
 				float capacidadLicor = scan.nextFloat();
 				System.out.println("Ingrese cantidad de stock inicial: ");
@@ -387,15 +406,15 @@ public class Main {
 	private static void crearCliente(ListaClientes listaClientes) {
 		Cliente cliente = new Cliente();
 		System.out.println("Ingrese su nombre:");
-		cliente.setNombre(scan.nextLine());
+		cliente.setNombre(scan.next());
 		System.out.println("Ingrese su apellido:");
-		cliente.setApellido(scan.nextLine());
+		cliente.setApellido(scan.next());
 		System.out.println("Ingrese su número de DNI:");
-		cliente.setDni(scan.nextLine());
+		cliente.setDni(scan.next());
 		System.out.println("Ingrese su fecha de nacimiento:");
-		cliente.setNacimiento(scan.nextLine());
+		cliente.setNacimiento(scan.next());
 		System.out.println("Ingrese una contraseña:");
-		cliente.setContraseña(scan.nextLine());
+		cliente.setContraseña(scan.next());
 		listaClientes.agregarCliente(cliente);
 		System.out.println("Su nombre de usuario será: " +cliente.getNombreUsuario());
 	}
@@ -404,7 +423,7 @@ public class Main {
 		System.out.println("Ingrese su nombre de usuario");
 		String nombreUsuario = scan.next(); 
 		System.out.println("Ingrese contraseña");
-		String password = scan.nextLine();
+		String password = scan.next();
 		if (listaClientes.estaCliente(nombreUsuario, password)){
 			int i = listaClientes.devolverPosicion(nombreUsuario);
 			menuCliente(listaClientes.devolverCliente(i), listaBebidas, listaPedidos);
@@ -475,7 +494,7 @@ public class Main {
 		}
 		return jsonArray;	
 	}*/
-	/*private static JSONArray inventarioToJSON (InventarioBebidas listaBebidas) {
+	private static JSONArray inventarioToJSON (InventarioBebidas listaBebidas) {
 		JSONArray jsonArray = new JSONArray();
 		for (int i = 0; i < listaBebidas.totalBebidas(); i++) {
 			JSONObject jsonObject = new JSONObject();
@@ -509,5 +528,5 @@ public class Main {
 			}	
 		}
 		return jsonArray;
-	}*/
+	}
 }
