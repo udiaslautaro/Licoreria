@@ -5,10 +5,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Date;
 
-import model.Archivo;
 import model.Cerveza;
 import model.Cliente;
 import model.Factura;
@@ -23,14 +28,13 @@ import model.Vino;
 public class Main {
 
 	public static Scanner scan = new Scanner(System.in);
-	public static Archivo archClientes = new Archivo("Clientes.dat");
-	public static Archivo archStock =new Archivo("Stock.dat");
-	
-	public static void main(String[] args) throws ClassNotFoundException {
+	public static File archClientes=new File("Clientes.dat");
+	public static File archStock=new File ("Stock.txt");
+	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		HistorialPedidos listaPedidos = new HistorialPedidos();
 		InventarioBebidas listaBebidas = new InventarioBebidas();
 		ListaClientes listaClientes = new ListaClientes();
-		cargarListas(listaClientes, listaBebidas);
+		//cargarListas(listaClientes, listaBebidas);
 		menu(listaBebidas, listaPedidos, listaClientes);
 		scan.close();
 	}
@@ -62,7 +66,11 @@ public class Main {
 					break;
 				}
 			case 3 :
-				salvandoDatos(listaClientes, listaBebidas);
+				try {
+					salvandoDatos(listaClientes, listaBebidas);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				scan.next();
 				break;
 			}
@@ -83,28 +91,40 @@ public class Main {
 		}else System.out.println("Contraseña incorrecta");
 	}
 
-	private static void salvandoDatos(ListaClientes listaClientes, InventarioBebidas listaBebidas) {
+	private static void salvandoDatos(ListaClientes listaClientes, InventarioBebidas listaBebidas) throws IOException {
+		FileOutputStream fOutput= new FileOutputStream(archClientes);
+		FileOutputStream fOutputStock= new FileOutputStream(archStock);
+		ObjectOutputStream objOutput = new ObjectOutputStream(fOutput);
+		ObjectOutputStream objOutputStock= new ObjectOutputStream(fOutputStock);
 		for(int i=0; i< listaClientes.totalClientes(); i++) {
-			archClientes.grabarEnArchivo(listaClientes.devolverCliente(i));
+			objOutput.writeObject(listaClientes.devolverCliente(i));
 		}
 		try {
-			archClientes.cerrarStream(archClientes);
+			objOutput.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
 			JSONArray stock = new JSONArray(inventarioToJSON(listaBebidas));
-			archStock.grabarJSONEnArchivo(stock);
+			objOutputStock.writeObject(stock);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			objOutputStock.close();
+		}catch(IOException e) {
 			e.printStackTrace();
 		}
 		
 	}
-	private static void cargarListas(ListaClientes listaClientes, InventarioBebidas listaBebidas) throws ClassNotFoundException {
-		do {
-			listaClientes.agregarCliente((Cliente)archClientes.cargarListaArchivo(archClientes));
-		}while (archClientes.cargarListaArchivo(archClientes)!= null);
+	private static void cargarListas(ListaClientes listaClientes, InventarioBebidas listaBebidas) throws ClassNotFoundException, IOException {
+		FileInputStream fInput = new FileInputStream(archClientes);
+		try (ObjectInputStream objInput = new ObjectInputStream(fInput)) {
+			do {
+				listaClientes.agregarCliente((Cliente)objInput.readObject());
+			}while (objInput.read()!= -1);
+		}
+		
 		
 		}
 	
