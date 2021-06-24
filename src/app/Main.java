@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -22,19 +23,19 @@ import model.InventarioBebidas;
 import model.Licor;
 import model.ListaClientes;
 import model.Pedido;
-import model.Pila;
 import model.Vino;
 
 public class Main {
 
 	public static Scanner scan = new Scanner(System.in);
+	public static File archPedidos=new File("Pedidos.dat");
 	public static File archClientes=new File("Clientes.dat");
 	public static File archStock=new File ("Stock.txt");
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		HistorialPedidos listaPedidos = new HistorialPedidos();
 		InventarioBebidas listaBebidas = new InventarioBebidas();
 		ListaClientes listaClientes = new ListaClientes();
-		//cargarListas(listaClientes, listaBebidas);
+		//cargarListaClientes(listaClientes);
 		menu(listaBebidas, listaPedidos, listaClientes);
 		scan.close();
 	}
@@ -51,7 +52,7 @@ public class Main {
 		if (opcion == 1 || opcion == 2 || opcion == 3) {
 			switch (opcion) {
 			case 1: 
-				adminLogin(listaBebidas, listaPedidos);
+				adminLogin(listaBebidas, listaPedidos, listaClientes);
 				break;
 			case 2:
 				System.out.println("1 - Registrarse como cliente");
@@ -60,6 +61,7 @@ public class Main {
 				switch (operacion) {
 				case 1:
 					crearCliente(listaClientes);
+					menu(listaBebidas, listaPedidos,listaClientes);
 					break;
 				case 2:
 					iniciarSesion(listaClientes, listaBebidas, listaPedidos);
@@ -67,7 +69,7 @@ public class Main {
 				}
 			case 3 :
 				try {
-					salvandoDatos(listaClientes, listaBebidas);
+					salvandoDatos(listaClientes, listaBebidas, listaPedidos);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -81,55 +83,94 @@ public class Main {
 			menu(listaBebidas, listaPedidos, listaClientes);
 		}
 	}
-	private static void adminLogin(InventarioBebidas listaBebidas,HistorialPedidos listaPedidos) {
+	private static void adminLogin(InventarioBebidas listaBebidas,HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		scan.nextLine();	
 		System.out.println("Ingrese Contraseña de administrador: ");
 		int contraseña;
 		contraseña=scan.nextInt();
 		if (contraseña == 1234){
-			menuAdmin(listaBebidas, listaPedidos);
+			menuAdmin(listaBebidas, listaPedidos, listaClientes);
 		}else System.out.println("Contraseña incorrecta");
 	}
 
-	private static void salvandoDatos(ListaClientes listaClientes, InventarioBebidas listaBebidas) throws IOException {
+	private static void salvandoDatos(ListaClientes listaClientes, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) throws IOException {
+		FileOutputStream fOutputPedido= new FileOutputStream(archPedidos);
 		FileOutputStream fOutput= new FileOutputStream(archClientes);
-		FileOutputStream fOutputStock= new FileOutputStream(archStock);
-		ObjectOutputStream objOutput = new ObjectOutputStream(fOutput);
-		ObjectOutputStream objOutputStock= new ObjectOutputStream(fOutputStock);
-		for(int i=0; i< listaClientes.totalClientes(); i++) {
-			objOutput.writeObject(listaClientes.devolverCliente(i));
-		}
-		try {
-			objOutput.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			JSONArray stock = new JSONArray(inventarioToJSON(listaBebidas));
-			objOutputStock.writeObject(stock);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		try {
-			objOutputStock.close();
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	private static void cargarListas(ListaClientes listaClientes, InventarioBebidas listaBebidas) throws ClassNotFoundException, IOException {
+        FileOutputStream fOutputStock= new FileOutputStream(archStock);
+        ObjectOutputStream objOutputPedido = new ObjectOutputStream(fOutputPedido);
+        ObjectOutputStream objOutput = new ObjectOutputStream(fOutput);
+        ObjectOutputStream objOutputStock= new ObjectOutputStream(fOutputStock);
+        for(int i=0; i< listaClientes.totalClientes(); i++) {
+            objOutput.writeObject(listaClientes.devolverCliente(i));
+        }
+        try {
+            objOutput.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (int i=0; i<listaBebidas.totalBebidas();i++) {
+        	objOutputStock.writeObject(listaBebidas.devolverPorPosicion(i));
+        }
+        try {
+            objOutputStock.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (int i=0; i<listaPedidos.tamañoListaPedidos(); i++) {
+        	objOutputPedido.writeObject(listaPedidos.devolverPorPosicion(i));
+        }
+        try {
+            objOutputPedido.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        }
+	
+        /*try {
+
+            FileWriter fileStock=new FileWriter(archStock);
+            fileStock.write(inventarioToJSON(listaBebidas).toString());
+            fileStock.flush();
+            fileStock.close();
+
+        } catch (IOException e) {
+            e.getStackTrace();
+        }
+        try {
+            JSONArray stock = new JSONArray(inventarioToJSON(listaBebidas));
+            objOutputStock.writeObject(stock);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            objOutputStock.close();
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+	/*private static void cargarListas(ListaClientes listaClientes, InventarioBebidas listaBebidas) throws ClassNotFoundException, IOException {
 		FileInputStream fInput = new FileInputStream(archClientes);
 		try (ObjectInputStream objInput = new ObjectInputStream(fInput)) {
 			do {
 				listaClientes.agregarCliente((Cliente)objInput.readObject());
 			}while (objInput.read()!= -1);
 		}
-		
-		
-		}
+		}*/
 	
-
-	private static void menuAdmin(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
+	private static void cargarListaClientes(ListaClientes listaClientes) throws ClassNotFoundException, IOException {
+        FileInputStream fInput = new FileInputStream(archClientes);
+        try (ObjectInputStream objInput = new ObjectInputStream(fInput)) {
+            if (objInput.read()!=-1) {
+                do {
+                	Cliente cliente=(Cliente) objInput.readObject();
+                    listaClientes.agregarCliente(cliente);
+                }while (objInput.read()!= -1);
+            }
+        }
+        System.out.println(""+listaClientes.totalClientes());
+    }
+	private static void menuAdmin(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		int opcion=0;
 
 		while (opcion != 6) { 
@@ -142,46 +183,46 @@ public class Main {
 			opcion = scan.nextInt();
 			switch (opcion) {
 			case 1: 
-				menuIngreso(listaBebidas, listaPedidos);
+				menuIngreso(listaBebidas, listaPedidos, listaClientes);
 				break;
 			case 2:
-				menuStock(listaBebidas, listaPedidos);
+				menuStock(listaBebidas, listaPedidos, listaClientes);
 				break;
 			case 3:
-				menuPrecio(listaBebidas, listaPedidos);
+				menuPrecio(listaBebidas, listaPedidos, listaClientes);
 				break;
 			case 4:
 				mostrarInventario(listaBebidas);
 				break;
 			case 5:
-				eliminarBebida(listaBebidas, listaPedidos);
+				eliminarBebida(listaBebidas, listaPedidos, listaClientes);
 				break;
 			case 6:
-				menu(listaBebidas, listaPedidos, null);
+				menu(listaBebidas, listaPedidos, listaClientes);
 				break;
 			default:
 				System.out.println("Opción inválida. Intente nuevamente.");
-				menu(listaBebidas, listaPedidos, null);
+				menu(listaBebidas, listaPedidos, listaClientes);
 
 			}		
 		}
 	}
-	private static void eliminarBebida(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
+	private static void eliminarBebida(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		String confirm;
 		int codigo;
 		System.out.println("Ingrese el codigo de la bebida a eliminar");
 		codigo =scan.nextInt();
 		if (listaBebidas.codigoExiste(codigo)) {
 			System.out.println("Esta a punto de eliminar "+ listaBebidas.buscarPorCodigo(codigo) + "Para confirmar ingrese Si");
-			confirm=scan.nextLine();
+			confirm=scan.next();
 			if (confirm== "Si") {
 				listaBebidas.eliminarBebidaPorCodigo(codigo);
 				System.out.println("Bebida eliminada, desea eliminar otra bebida? Si o cualquier tecla para salir");
 				confirm=scan.nextLine();
 				if(confirm == "Si") {
-					eliminarBebida(listaBebidas, listaPedidos);
+					eliminarBebida(listaBebidas, listaPedidos, listaClientes);
 				}else {
-					menuAdmin(listaBebidas, listaPedidos);
+					menuAdmin(listaBebidas, listaPedidos, listaClientes);
 				}
 
 			}
@@ -190,18 +231,18 @@ public class Main {
 			scan.next();
 			confirm=scan.nextLine();
 			if (confirm == "Si") {
-				eliminarBebida(listaBebidas, listaPedidos);
+				eliminarBebida(listaBebidas, listaPedidos, listaClientes);
 			}else {
-				menuAdmin(listaBebidas, listaPedidos);
+				menuAdmin(listaBebidas, listaPedidos, listaClientes);
 			}
 		}
 	}
 
 	private static void mostrarInventario(InventarioBebidas listaBebidas) {
-		listaBebidas.mostrarTodoInventario();
+		System.out.println(listaBebidas.mostrarTodoInventario());
 
 	}
-	private static void menuPrecio(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
+	private static void menuPrecio(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		String opcion;
 		float precio;
 		System.out.println("Ingrese el codigo de la bebida a la que desea modificarle el precio: ");
@@ -216,20 +257,19 @@ public class Main {
 			scan.next();
 			opcion= scan.nextLine();
 			if (opcion== "Si") {
-				menuPrecio(listaBebidas, listaPedidos);
+				menuPrecio(listaBebidas, listaPedidos, listaClientes);
 			}else {
-				menuAdmin(listaBebidas, listaPedidos);
+				menuAdmin(listaBebidas, listaPedidos, listaClientes);
 			}
 
 		}
 	}
-	private static void menuCliente(Cliente cliente, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
+	private static void menuCliente(Cliente cliente, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 
 		System.out.println("Ingrese que operación desea realizar:");
 		System.out.println("1 - Realizar pedido.");
 		System.out.println("2 - Consultar pedidos anteriores.");
-		System.out.println("3 - Mostrar ultimo pedido.");
-		System.out.println("4 - Cerrar Sesión.");
+		System.out.println("3 - Cerrar Sesión.");
 		int opcion;
 		opcion = scan.nextInt();
 		switch (opcion) {
@@ -238,19 +278,17 @@ public class Main {
 			nuevoPedido(pedido, listaBebidas, listaPedidos, cliente);
 			break;
 		case 2:
-			mostrarPedidosCliente(cliente);
+			mostrarPedidosCliente(cliente, listaPedidos);
 			break;
-		case 3: verUltimaFactura(cliente);
-		break;
-		case 4: 
-			menu(listaBebidas, listaPedidos, null);
+		case 3: 
+			menu(listaBebidas, listaPedidos,listaClientes);
 		default:
 			System.out.println("Opción inválida. Intente nuevamente.");
-			menuCliente(cliente, listaBebidas, listaPedidos);
+			menuCliente(cliente, listaBebidas, listaPedidos, listaClientes);
 		}
 	}
 
-	private static void menuIngreso(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
+	private static void menuIngreso(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		int opcion;
 		char op = 0;
 		System.out.println("1- Vino");
@@ -291,15 +329,16 @@ public class Main {
 			System.out.println("Desea agregar otra bebida? S/N");
 			op=scan.next().charAt(op);
 			switch (op) {
-			case 's': menuIngreso(listaBebidas, listaPedidos);
+			case 'S': menuIngreso(listaBebidas, listaPedidos, listaClientes);
 			break;
-			case 'n':		
-				menuAdmin(listaBebidas, listaPedidos);
+			case 'N':		
+				menuAdmin(listaBebidas, listaPedidos, listaClientes);
 				break;
 			default: 
 				System.out.println("Opcion Incorrecta volviendo al menu principal");
-				menuAdmin(listaBebidas, listaPedidos);
+				menuAdmin(listaBebidas, listaPedidos, listaClientes);
 				break;
+			}
 			case 2:
 				System.out.println("Ingrese marca:");
 				String marcaCerveza= scan.next();
@@ -328,14 +367,14 @@ public class Main {
 				System.out.println("Desea agregar otra bebida? S/N");
 				op=scan.next().charAt(op);
 				switch (op) {
-				case 's': menuIngreso(listaBebidas, listaPedidos);
+				case 'S': menuIngreso(listaBebidas, listaPedidos, listaClientes);
 				break;
-				case 'n':		
-					menuAdmin(listaBebidas, listaPedidos);
+				case 'N':		
+					menuAdmin(listaBebidas, listaPedidos, listaClientes);
 					break;
 				default: 
 					System.out.println("Opcion Incorrecta volviendo al menu principal");
-					menuAdmin(listaBebidas, listaPedidos);
+					menuAdmin(listaBebidas, listaPedidos, listaClientes);
 					break;
 				}
 			case 3:
@@ -343,7 +382,7 @@ public class Main {
 				String marcaLicor= scan.next();
 				System.out.println("Ingrese nombre:");
 				String nombreLicor= scan.next();
-				System.out.println("Ingrse tipo de licor: ");
+				System.out.println("Ingrese tipo de licor: ");
 				String tipoLicor= scan.next();
 				System.out.println("Ingrese origen: ");
 				String origenLicor= scan.next();
@@ -363,21 +402,20 @@ public class Main {
 				System.out.println("Desea agregar otra bebida? S/N");
 				op=scan.next().charAt(op);
 				switch (op) {
-				case 's': menuIngreso(listaBebidas, listaPedidos);
+				case 'S': menuIngreso(listaBebidas, listaPedidos, listaClientes);
 				break;
-				case 'n':		
-					menuAdmin(listaBebidas, listaPedidos);
+				case 'N':		
+					menuAdmin(listaBebidas, listaPedidos, listaClientes);
 					break;
 				default: 
 					System.out.println("Opcion Incorrecta volviendo al menu principal");
-					menuAdmin(listaBebidas, listaPedidos);
+					menuAdmin(listaBebidas, listaPedidos, listaClientes);
 					break;
 				}
-			}
-		}	
+			}	
 
 	}
-	private static void menuStock(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
+	private static void menuStock(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		int opcion;
 		System.out.println("Ingrese el codigo de la bebida:");
 		int codigoBebida = scan.nextInt();
@@ -390,37 +428,24 @@ public class Main {
 		System.out.println("Presione 1 para salir o cualquier otra tecla para reintentar");
 		opcion =scan.nextInt();
 		if (opcion == 1) {
-			menuAdmin(listaBebidas, listaPedidos);
-		}else menuStock(listaBebidas, listaPedidos);
+			menuAdmin(listaBebidas, listaPedidos, listaClientes);
+		}else menuStock(listaBebidas, listaPedidos, listaClientes);
 		}
 	}
 
-	private static void mostrarPedidosCliente(Cliente cliente) {
+	private static void mostrarPedidosCliente(Cliente cliente, HistorialPedidos listaPedidos) {
 		System.out.println("Listado de sus pedidos anteriores: \n");
-		Pila<Factura> aux =new Pila<Factura>();
-		while (!cliente.factura.pilaVacia()) {
-			aux.apilar(cliente.factura.verUltima());
-			cliente.factura.toString();
-			cliente.factura.desapilar();
-		}
-		while(!aux.pilaVacia()) {
-			cliente.factura.apilar(aux.verUltima());
-			aux.desapilar();
-		}
-		//String codigo = cliente.getCodigo();
-		//listaPedidos.mostrarPedidosCliente(codigo);
+		String codigo = cliente.getCodigo();
+		listaPedidos.mostrarPedidosCliente(codigo);
 	}
-	private static void verUltimaFactura(Cliente cliente) {
-		System.out.println("\nSu ultima factura es: \n" + cliente.factura.verUltima().toString());
-	}
+
 
 	private static void imprimirFactura(float montoPedido, Pedido pedido, Cliente cliente) {
 		Date fecha = new Date();
 		System.out.println("¿Cómo desea abonar su pedido? \n1-Tarjeta \2-Efectivo");
 		int medioDePago = scan.nextInt();
-		Factura factura = new Factura(montoPedido,fecha, medioDePago, pedido);
-		factura.toString();
-		cliente.factura.apilar(factura);
+		Factura factura = new Factura(montoPedido,fecha, medioDePago,pedido);
+		System.out.println(factura.toString());	
 	}
 
 	private static void crearCliente(ListaClientes listaClientes) {
@@ -446,7 +471,7 @@ public class Main {
 		String password = scan.next();
 		if (listaClientes.estaCliente(nombreUsuario, password)){
 			int i = listaClientes.devolverPosicion(nombreUsuario);
-			menuCliente(listaClientes.devolverCliente(i), listaBebidas, listaPedidos);
+			menuCliente(listaClientes.devolverCliente(i), listaBebidas, listaPedidos, listaClientes);
 		}
 		else {
 			System.out.println("Nombre de usuario o contraseña no válidos, intente nuevamente");
@@ -457,7 +482,7 @@ public class Main {
 		char continuar = 'S';
 		float montoPedido = 0;
 		while (continuar == 'S') {
-			listaBebidas.mostrarInfoBebidas();
+			System.out.println(listaBebidas.mostrarInfoBebidas());
 			System.out.println("Ingrese el código de la bebida que desea agregar al pedido: ");
 			int codigo = scan.nextInt();
 			//Busca la bebida en el inventario y si tiene el stock que se busca,la agrega
@@ -475,7 +500,7 @@ public class Main {
 				}
 			}
 			System.out.println("Desea agregar otra bebida al pedido? S/N");
-			scan.next().charAt(continuar);
+			continuar = scan.next().charAt(0);
 		}
 		System.out.println("El monto total del pedido es: $"+montoPedido);
 		listaPedidos.agregarPedido(pedido);
@@ -549,4 +574,5 @@ public class Main {
 		}
 		return jsonArray;
 	}
+	
 }

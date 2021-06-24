@@ -11,7 +11,7 @@ public class Cliente implements Serializable {
 	private String nacimiento;
 	private String nombre;
 	private String nombreUsuario;
-	public Pila<Factura> factura;
+
 	
 	
 	public String getNombre() {
@@ -66,13 +66,11 @@ public class Cliente implements Serializable {
 		this.nacimiento = nacimiento;
 		this.nombre = nombre;
 		this.nombreUsuario = nombreUsuario;
-		this.factura= new Pila<Factura>();
 	}
 	
 	public Cliente() {
 		
 	}
-	
-	
+		
 
 }

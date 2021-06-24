@@ -53,10 +53,10 @@ public class Factura {
 		this.monto = monto;
 		this.fecha = fecha;
 		this.medioDePago = medioDePago;
-		this.pedido = pedido;
+		this.pedido = pedido;		
 	}
 
-	
+
 	//Realiza un interes de 10% si se paga con tarjeta.
 	public float precioFinal() {
 		float precio;
@@ -73,7 +73,7 @@ public class Factura {
 	@Override
 	public String toString() {
 		return "Factura [Fecha =" +fecha+ "Monto Total=" + monto + ", medioDePago="
-				+ medioDePago +", Precio Final" + precioFinal() + ", codigoCliente=" + codigoCliente +  "]";
+				+ medioDePago +", Precio Final" + precioFinal() + "]";
 	}
 	
 	
