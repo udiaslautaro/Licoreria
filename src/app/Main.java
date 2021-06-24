@@ -43,7 +43,12 @@ public class Main {
 		scan.close();
 	}
 
-
+	/**
+	 * Menu: ingresar 1 para ingresar como administrador o 2 como cliente
+	 * @param listaBebidas
+	 * @param listaPedidos
+	 * @param listaClientes
+	 */
 	public static void menu(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 
 		System.out.println("Bienvenido");
@@ -86,6 +91,12 @@ public class Main {
 			menu(listaBebidas, listaPedidos, listaClientes);
 		}
 	}
+	/**
+	 * verifica contraseña del administrador
+	 * @param listaBebidas
+	 * @param listaPedidos
+	 * @param listaClientes
+	 */
 	private static void adminLogin(InventarioBebidas listaBebidas,HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		scan.nextLine();	
 		System.out.println("Ingrese Contraseña de administrador: ");
@@ -95,7 +106,13 @@ public class Main {
 			menuAdmin(listaBebidas, listaPedidos, listaClientes);
 		}else System.out.println("Contraseña incorrecta");
 	}
-
+	/**
+	 * graba lista de clientes, de bebidas y pedidos en sus respectivos archivos
+	 * @param listaClientes
+	 * @param listaBebidas
+	 * @param listaPedidos
+	 * @throws IOException
+	 */
 	private static void salvandoDatos(ListaClientes listaClientes, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) throws IOException {
 		try {
 			FileOutputStream fOutputPedido= new FileOutputStream(archPedidos);
@@ -153,8 +170,13 @@ public class Main {
 				listaClientes.agregarCliente((Cliente)objInput.readObject());
 			}while (objInput.read()!= -1);
 		}
-		}*/
-
+		}*/ 
+	/**
+	 * muestra lista clientes
+	 * @param listaClientes
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	private static void cargarListaClientes(ListaClientes listaClientes) throws ClassNotFoundException, IOException {
 		try {
 			FileInputStream fInput = new FileInputStream(archClientes);
@@ -176,6 +198,12 @@ public class Main {
 			e.getStackTrace();
 		}
 	}
+	/**
+	 * muestra lista pedidos
+	 * @param listaPedidos
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	private static void cargarListaPedidos(HistorialPedidos listaPedidos) throws ClassNotFoundException, IOException {
 		try {
 			FileInputStream fInput = new FileInputStream(archPedidos);
@@ -198,6 +226,12 @@ public class Main {
 		}
 
 	}
+	/**
+	 * muestra lista de bebidas
+	 * @param listaBebidas
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	private static void cargarListaBebidas(InventarioBebidas listaBebidas) throws ClassNotFoundException, IOException {
 		try {
 			FileInputStream fInput = new FileInputStream(archStock);
@@ -220,6 +254,13 @@ public class Main {
 		}
 
 	}
+	/**
+	 * Opciones para realizar como administrador: 1-Ingresar bebida, 2-Agregar al stock, 3-modificar un precio
+	 * 4-mostrar inventario bebidas, 5- eliminar bebida, 6-vovler al menu principal
+	 * @param listaBebidas
+	 * @param listaPedidos
+	 * @param listaClientes
+	 */
 	private static void menuAdmin(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		int opcion=0;
 
@@ -257,6 +298,12 @@ public class Main {
 			}		
 		}
 	}
+	/**
+	 * elimina bebida del inventario
+	 * @param listaBebidas
+	 * @param listaPedidos
+	 * @param listaClientes
+	 */
 	private static void eliminarBebida(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		String confirm;
 		int codigo;
@@ -287,11 +334,20 @@ public class Main {
 			}
 		}
 	}
-
+	/**
+	 * muestra inventario de bebidas
+	 * @param listaBebidas
+	 */
 	private static void mostrarInventario(InventarioBebidas listaBebidas) {
 		System.out.println(listaBebidas.mostrarTodoInventario());
 
 	}
+	/**
+	 * modifica precio de la bebida
+	 * @param listaBebidas
+	 * @param listaPedidos
+	 * @param listaClientes
+	 */
 	private static void menuPrecio(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		String opcion;
 		float precio;
@@ -314,6 +370,13 @@ public class Main {
 
 		}
 	}
+	/**
+	 * Permite realizar acciones como cliente: 1- registrarse, 2-iniciar sesion, 3-salir
+	 * @param cliente
+	 * @param listaBebidas
+	 * @param listaPedidos
+	 * @param listaClientes
+	 */
 	private static void menuCliente(Cliente cliente, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 
 		System.out.println("Ingrese que operación desea realizar:");
@@ -339,7 +402,12 @@ public class Main {
 			menuCliente(cliente, listaBebidas, listaPedidos, listaClientes);
 		}
 	}
-
+	/**
+	 * ingresa bebidas al sistema
+	 * @param listaBebidas
+	 * @param listaPedidos
+	 * @param listaClientes
+	 */
 	private static void menuIngreso(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		int opcion;
 		char op = 0;
@@ -467,6 +535,12 @@ public class Main {
 		}	
 
 	}
+	/**
+	 * modifica stock de una bebida
+	 * @param listaBebidas
+	 * @param listaPedidos
+	 * @param listaClientes
+	 */
 	private static void menuStock(InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, ListaClientes listaClientes) {
 		int opcion;
 		System.out.println("Ingrese el codigo de la bebida:");
@@ -484,14 +558,23 @@ public class Main {
 		}else menuStock(listaBebidas, listaPedidos, listaClientes);
 		}
 	}
-
+	/**
+	 * muestra todos los pedidos de un cliente
+	 * @param cliente
+	 * @param listaPedidos
+	 */
 	private static void mostrarPedidosCliente(Cliente cliente, HistorialPedidos listaPedidos) {
 		System.out.println("Listado de sus pedidos anteriores: \n");
 		String codigo = cliente.getCodigo();
 		System.out.println(listaPedidos.mostrarPedidosCliente(codigo));
 	}
 
-
+	/**
+	 * imprime factura de un pedido
+	 * @param montoPedido
+	 * @param pedido
+	 * @param cliente
+	 */
 	private static void imprimirFactura(float montoPedido, Pedido pedido, Cliente cliente) {
 		Date fecha = new Date();
 		System.out.println("¿Cómo desea abonar su pedido? \n1-Tarjeta \2-Efectivo");
@@ -499,7 +582,10 @@ public class Main {
 		Factura factura = new Factura(montoPedido,fecha, medioDePago,pedido);
 		System.out.println(factura.toString());	
 	}
-
+	/**
+	 * da de alta un cliente, recibe sus datos y le crea un nombre de usuario
+	 * @param listaClientes
+	 */
 	private static void crearCliente(ListaClientes listaClientes) {
 		Cliente cliente = new Cliente();
 		System.out.println("Ingrese su nombre:");
@@ -515,7 +601,12 @@ public class Main {
 		listaClientes.agregarCliente(cliente);
 		System.out.println("Su nombre de usuario será: " +cliente.getNombreUsuario());
 	}
-
+	/**
+	 * valida el inicio de sesion
+	 * @param listaClientes
+	 * @param listaBebidas
+	 * @param listaPedidos
+	 */
 	private static void iniciarSesion(ListaClientes listaClientes, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) {
 		System.out.println("Ingrese su nombre de usuario");
 		String nombreUsuario = scan.next(); 
@@ -530,6 +621,13 @@ public class Main {
 			iniciarSesion(listaClientes, listaBebidas, listaPedidos);
 		}
 	}
+	/**
+	 * permite al cliente realizar nuevo pedido
+	 * @param pedido
+	 * @param listaBebidas
+	 * @param listaPedidos
+	 * @param cliente
+	 */
 	private static void nuevoPedido(Pedido pedido, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos, Cliente cliente) {
 		char continuar = 'S';
 		float montoPedido = 0;

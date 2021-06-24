@@ -37,7 +37,14 @@ public class Factura {
 	public Pedido getPedido() {
 		return pedido;
 	}
-	
+	/**
+	 * constructor de factura
+	 * @param monto
+	 * @param fecha
+	 * @param codigoCliente
+	 * @param medioDePago
+	 * @param pedido
+	 */
 	public Factura(float monto, Date fecha, String codigoCliente, int medioDePago, Pedido pedido) {
 		super();
 		this.monto = monto;
@@ -47,7 +54,13 @@ public class Factura {
 		this.pedido = pedido;
 	}
 	/* Constructor para Consumidor Final*/
-	
+	/**
+	 * constructor factura
+	 * @param monto
+	 * @param fecha
+	 * @param medioDePago
+	 * @param pedido
+	 */
 	public Factura(float monto, Date fecha, int medioDePago, Pedido pedido) {
 		super();
 		this.monto = monto;
@@ -57,7 +70,10 @@ public class Factura {
 	}
 
 
-	//Realiza un interes de 10% si se paga con tarjeta.
+	/**
+	 * calcula precio final del pedido.Realiza un interes de 10% si se paga con tarjeta. 
+	 * @return precio final del pedido
+	 */
 	public float precioFinal() {
 		float precio;
 		if(medioDePago == 1) {
