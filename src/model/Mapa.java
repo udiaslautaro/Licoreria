@@ -26,7 +26,7 @@ public class Mapa<T, E> {
 	{
 		return mapaUsuarios.size();
 	}
-	public boolean buscarDato(T dato) 
+/*	public boolean buscarDato(T dato) 
 	{
 		boolean bool=false;
 		Iterator<T> it = (Iterator<T>) mapaUsuarios.keySet().iterator();
@@ -35,7 +35,7 @@ public class Mapa<T, E> {
 			if mapaUsuarios.get(mapaUsuarios)
 		}
 		return bool;
-	}
+	}*/
 }
 
 	
