@@ -76,7 +76,7 @@ public class Main {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				scan.next();
+				System.out.println("Adios!");
 				break;
 			}
 
@@ -97,38 +97,32 @@ public class Main {
 	}
 
 	private static void salvandoDatos(ListaClientes listaClientes, InventarioBebidas listaBebidas, HistorialPedidos listaPedidos) throws IOException {
-		FileOutputStream fOutputPedido= new FileOutputStream(archPedidos);
-		FileOutputStream fOutput= new FileOutputStream(archClientes);
-		FileOutputStream fOutputStock= new FileOutputStream(archStock);
-		ObjectOutputStream objOutputPedido = new ObjectOutputStream(fOutputPedido);
-		ObjectOutputStream objOutput = new ObjectOutputStream(fOutput);
-		ObjectOutputStream objOutputStock= new ObjectOutputStream(fOutputStock);
-		for(int i=0; i< listaClientes.totalClientes(); i++) {
-			objOutput.writeObject(listaClientes.devolverCliente(i));
-		}
 		try {
+			FileOutputStream fOutputPedido= new FileOutputStream(archPedidos);
+			FileOutputStream fOutput= new FileOutputStream(archClientes);
+			FileOutputStream fOutputStock= new FileOutputStream(archStock);
+			ObjectOutputStream objOutputPedido = new ObjectOutputStream(fOutputPedido);
+			ObjectOutputStream objOutput = new ObjectOutputStream(fOutput);
+			ObjectOutputStream objOutputStock= new ObjectOutputStream(fOutputStock);
+			for(int i=0; i< listaClientes.totalClientes(); i++) {
+				objOutput.writeObject(listaClientes.devolverCliente(i));
+			}
+
+			for (int i=0; i<listaBebidas.totalBebidas();i++) {
+				objOutputStock.writeObject(listaBebidas.devolverPorPosicion(i));
+			}
+
+			for (int i=0; i<listaPedidos.tamañoListaPedidos(); i++) {
+				objOutputPedido.writeObject(listaPedidos.devolverPorPosicion(i));
+			}
 			objOutput.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		for (int i=0; i<listaBebidas.totalBebidas();i++) {
-			objOutputStock.writeObject(listaBebidas.devolverPorPosicion(i));
-		}
-		try {
-			objOutputStock.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		for (int i=0; i<listaPedidos.tamañoListaPedidos(); i++) {
-			objOutputPedido.writeObject(listaPedidos.devolverPorPosicion(i));
-		}
-		try {
 			objOutputPedido.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+			objOutputStock.close();
+		} catch (IOException e) 
+		{
+			System.out.println("Ha habido un problema guardando los archivos");
 		}
 	}
-
 	/*try {
 
             FileWriter fileStock=new FileWriter(archStock);
@@ -217,7 +211,7 @@ public class Main {
 			Bebida bebida;
 			while ((bebida = (Bebida)objInput.readObject())!= null) 
 			{
-				listaBebidas.agregarBebida(null);
+				listaBebidas.agregarBebida(bebida);
 			}
 			objInput.close();
 		}
@@ -494,7 +488,7 @@ public class Main {
 	private static void mostrarPedidosCliente(Cliente cliente, HistorialPedidos listaPedidos) {
 		System.out.println("Listado de sus pedidos anteriores: \n");
 		String codigo = cliente.getCodigo();
-		listaPedidos.mostrarPedidosCliente(codigo);
+		System.out.println(listaPedidos.mostrarPedidosCliente(codigo));
 	}
 
 
