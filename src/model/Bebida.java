@@ -1,6 +1,8 @@
 package model;
 
-public class Bebida {
+import java.io.Serializable;
+
+public class Bebida implements Serializable{
 
 	private String graduacion;
 	private String marca;
